@@ -1,0 +1,13 @@
+body{
+    margin: 0;
+}
+
+canvas{
+
+    background: blue;
+    margin: 5px;
+}
+
+#spin_reels{
+    margin: 5px;
+}
