@@ -1,8 +1,6 @@
 
 
 export async function LoadTextures() {
-
-
   return new Promise((resolve, reject) => {
     PIXI.Loader.shared
       .add("01-lemon", "./rsc/lemon_pr.png")
@@ -18,17 +16,13 @@ export async function LoadTextures() {
       .add("11-dollar", "./rsc/dollar_pr.png")
       .add("12-triple_bar", "./rsc/tri_bar_pr.png")
       .load(() => {
-
         resolve();
       });
   });
-
-  
 }
 
-
-export function InitSprites(){
-  let TextureCache = PIXI.utils.TextureCache
+export function InitSprites() {
+  let TextureCache = PIXI.utils.TextureCache;
   let x = new Map();
   x.set(1, new PIXI.Sprite(TextureCache["01-lemon"]));
   x.set(2, new PIXI.Sprite(TextureCache["02-orange"]));
@@ -46,6 +40,8 @@ export function InitSprites(){
   return x;
 }
 
-export function AttachSpinButtonClickHandler(fn){
-  document.getElementById("spin").addEventListener("click",fn)
+export function AttachSpinButtonClickHandler(fn) {
+  document.getElementById("spin").addEventListener("click", fn);
 }
+
+
