@@ -12,7 +12,9 @@ export class Reel {
 
     this.stage = new PIXI.Container();
 
-    this.SymbolSlots = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    this.SymbolSlots =this.shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+
+    //console.log(this.SymbolSlots)
 
     this.reel_size=this.SymbolSlots.length;
 
@@ -58,7 +60,7 @@ export class Reel {
     for (let ir = 0; ir < r; ir++) {
 
     //vertikalni pomak rolne u 1 frejmu
-    let vy=this.symbol_height/60.0*10.0*speed_list[ir]
+    let vy=this.symbol_height/6.0*speed_list[ir]
 
     //celobrojni ostatak visine sprajta nakon vertikalne translacije vy puta
     let rem=(this.symbol_height%vy)
@@ -88,11 +90,14 @@ export class Reel {
       //uzmi sledeću vrednost generatora
       let g = this.YStepGenerator.next();
 
+      //console.log(delta)
+
       //proveri da li je došao do kraja
       //promeni y koordinatu svim sprajtovima u kontejneru
       if (!g.done) {
         //ako je promena y koord na redu
         if (g.value.y_step_delta) {
+        
           for (
             let symbol_slot = 0;
             symbol_slot < this.reel_size;
@@ -100,8 +105,6 @@ export class Reel {
           ) {
             const spr = this.stage.children[symbol_slot];
             spr.y += g.value.delta;
-
-            //if(symbol_slot===3) console.log("spr.y="+spr.y)
           }
         } else {
           //ako je donji sprajt u potpunosti izašao iz vidljivog dela kontejnera
@@ -122,14 +125,7 @@ export class Reel {
           //prvi simbol prebaci na kraj rolne (rotacija)
           this.SymbolSlots.push(this.SymbolSlots.shift());
 
-          //ponovo se dodaje novi sprajt na mesto broj 4 (iznad gornjeg 1 vidljivog elementa)
-          //let next_sprite = this.reel_sprite_map.get(this.SymbolSlots[3]);
 
-          
-          //next_sprite.visible=true;
-
-
-          //this.stage.addChild(next_sprite);
         }
       } else {
         //kraj rotacije
@@ -170,4 +166,14 @@ export class Reel {
     this.YStepGenerator = null;
     this.is_spinning=false;
   }
+
+  shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+
+    return array;
+}
+
 }
