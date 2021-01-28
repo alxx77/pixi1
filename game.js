@@ -12,9 +12,9 @@ async function StartGame() {
 
     let slot_machine=new SlotMachine(canvas1);
 
-    await slot_machine.InitMachine();
+    await slot_machine.initMachine();
 
-    slot_machine.StartSlotMachine();
+    slot_machine.startSlotMachine();
 
 }
 

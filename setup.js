@@ -1,4 +1,4 @@
-export function GetReelSymbolTextureNames() {
+export function getReelSymbolTextureNames() {
   let x = new Map();
   x.set("01-lemon", "./rsc/lemon_pr.png");
   x.set("02-orange", "./rsc/orange_pr.png");
@@ -17,10 +17,10 @@ export function GetReelSymbolTextureNames() {
 }
 
 //učitavanje tekstura
-export async function LoadTextures() {
+export async function loadTextures() {
   return new Promise((resolve, reject) => {
     //ide se redom po listi
-    GetReelSymbolTextureNames().forEach((value, key) => {
+    getReelSymbolTextureNames().forEach((value, key) => {
       PIXI.Loader.shared.add(key, value);
     });
 
@@ -31,12 +31,12 @@ export async function LoadTextures() {
 }
 
 //inicijalizacija sprajtova
-export function InitSprites() {
+export function initSprites() {
   let TextureCache = PIXI.utils.TextureCache;
 
   let x = new Map();
 
-  GetReelSymbolTextureNames().forEach((value, key) => {
+  getReelSymbolTextureNames().forEach((value, key) => {
     x.set(key, new PIXI.Sprite(TextureCache[key]));
   });
 
@@ -44,6 +44,6 @@ export function InitSprites() {
 }
 
 
-export function AttachSpinButtonClickHandler(fn) {
+export function attachSpinButtonClickHandler(fn) {
   document.getElementById("spin").addEventListener("click", fn);
 }
