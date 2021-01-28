@@ -7,15 +7,15 @@ import {
     GetReelSymbolTextureNames,
   } from "./setup.js";
 
-  //canvas elementi za tri rolne
-const canvas1 = document.getElementById("mycanvas1");
-const canvas2 = document.getElementById("mycanvas2");
-const canvas3 = document.getElementById("mycanvas3");
+
 
 
 //slot mašina
 export class SlotMachine {
-  constructor() {
+  constructor(canvas) {
+
+    this.canvas=canvas;
+
     //instance rolni
     this.reel1 = null;
     this.reel2 = null;
@@ -52,18 +52,36 @@ export class SlotMachine {
     let map2 = InitSprites();
     let map3 = InitSprites();
 
+    let sprite=map1.entries().next().value[1]
 
+    //console.log(sprite.width)
 
+    let stage = new PIXI.Container();
+    //stage.width=244*3
+
+    //renderer
+    let renderer=new PIXI.Renderer({
+        view: this.canvas,
+        width: 244*3,
+        height: 244 * 3,
+      });
+    
 
     //instanciranje instanci reel objekta
-    this.reel1 = new Reel(1, canvas1, 244, 244, map1, symbol_slot1);
-    this.reel2 = new Reel(2, canvas2, 244, 244, map2, symbol_slot2);
-    this.reel3 = new Reel(3, canvas3, 244, 244, map3, symbol_slot3);
+    this.reel1 = new Reel(1,stage,244, 244, map1, symbol_slot1,0);
+    this.reel2 = new Reel(2,stage,244, 244, map2, symbol_slot2,244);
+    this.reel3 = new Reel(3,stage,244, 244, map3, symbol_slot3,244*2);
+  
 
     //dodavanje render funkcija objekata u ticker obj.
-    this.ticker.add(this.reel1.GetRendererFn);
-    this.ticker.add(this.reel2.GetRendererFn);
-    this.ticker.add(this.reel3.GetRendererFn);
+    this.ticker.add(()=>{
+        this.reel1.Animate();
+        this.reel2.Animate();
+        this.reel3.Animate();
+
+        renderer.render(stage)
+    });
+
 
     //kaćenje event handlera "spin" dugmeta
     AttachSpinButtonClickHandler(this.SpinReels);

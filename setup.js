@@ -43,6 +43,7 @@ export function InitSprites() {
   return x;
 }
 
+
 export function AttachSpinButtonClickHandler(fn) {
   document.getElementById("spin").addEventListener("click", fn);
 }

@@ -6,7 +6,11 @@ import { SlotMachine } from "./slot_machine.js"
 
 async function StartGame() {
 
-    let slot_machine=new SlotMachine();
+     //canvas
+     const canvas1 = document.getElementById("mycanvas1");
+
+
+    let slot_machine=new SlotMachine(canvas1);
 
     await slot_machine.InitMachine();
 
@@ -14,4 +18,4 @@ async function StartGame() {
 
 }
 
-StartGame()
+//StartGame()

@@ -1,23 +1,19 @@
 export class Reel {
   constructor(
     reel_id,
-    canvas,
+    container,
     symbol_width,
     symbol_height,
     reel_sprite_map,
     symbol_slots,
+    x_pos,
     cb_finished
   ) {
-    
-    //novi renderer objekt
-    this.renderer = new PIXI.Renderer({
-      view: canvas,
-      width: symbol_width,
-      height: symbol_height * 3,
-    });
+    //renderer
+    this.container = container;
 
     //reel id
-    this.reel_id=reel_id;
+    this.reel_id = reel_id;
 
     //visina sprajta simbola u px
     this.symbol_height = symbol_height;
@@ -40,14 +36,8 @@ export class Reel {
     this.is_spinning = false;
 
     this.YStepGenerator = null;
-
-    this.SetStage();
-  }
-
-  SetStage() {
-    //ako već postoje sprajtovi izađi
-    if (this.stage.children.length > 0) return;
-
+  
+    //inicijalno postavljanje sprajtova u stage
     //prođi kroz sva mesta za sprajtove +1
     for (let i = 0; i < this.reel_size; i++) {
       //nađi sprajt za dati simbol
@@ -64,6 +54,12 @@ export class Reel {
 
       this.stage.addChild(sprite);
     }
+
+    this.stage.x=x_pos;
+    this.container.addChild(this.stage);
+
+    //console.dir(this.reel_id+":" + this.stage.children)
+
   }
 
   GetYStepGenerator = function* (r, speed_list) {
@@ -97,7 +93,7 @@ export class Reel {
   };
 
   //rendering funkcija koja ide u ticker
-  GetRendererFn = () => {
+  Animate = () => {
     //ako je postavljen generator promene y koordinate
     if (this.YStepGenerator) {
       //uzmi sledeću vrednost generatora
@@ -155,16 +151,18 @@ export class Reel {
         //ukloni generator
         this.ClearYStepGenerator();
 
-        //console.log("id: "+ this.reel_id+" " + this.SymbolSlots)
+        console.log("id: "+ this.reel_id+" " + this.SymbolSlots)
 
         //kraj
-        if(this.cb_finished){
-            if(this.cb_finished instanceof Function) cb_finished(this.reel_id);
+        if (this.cb_finished) {
+          if (this.cb_finished instanceof Function) cb_finished(this.reel_id);
         }
       }
+
+
+
     }
 
-    this.renderer.render(this.stage);
   };
 
   //pokretanje rolne
@@ -177,7 +175,7 @@ export class Reel {
 
   //Kreiraj novu instancu generatora
   SetYStepGeneratorInstance(r) {
-    this.YStepGenerator = this.GetYStepGenerator(r+12, []);
+    this.YStepGenerator = this.GetYStepGenerator(r + 12, []);
   }
 
   //ukloni generator
