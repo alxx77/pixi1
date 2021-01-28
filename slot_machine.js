@@ -4,6 +4,7 @@ import {
     LoadTextures,
     InitSprites,
     AttachSpinButtonClickHandler,
+    GetReelSymbolTextureNames,
   } from "./setup.js";
 
   //canvas elementi za tri rolne
@@ -29,10 +30,19 @@ export class SlotMachine {
   }
 
   async InitMachine() {
-    //kreiranje redosleda simbola na rolnama
-    let symbol_slot1 = shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-    let symbol_slot2 = shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-    let symbol_slot3 = shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+
+    //imena simbola na rolnama
+    let symbol_names=[]
+    
+    GetReelSymbolTextureNames().forEach((val,key)=>{
+        symbol_names.push(key)
+    })
+
+
+    //kreiranje slučajnog redosleda simbola na rolnama
+    let symbol_slot1 = shuffleArray(symbol_names.slice(0));
+    let symbol_slot2 = shuffleArray(symbol_names.slice(0));
+    let symbol_slot3 = shuffleArray(symbol_names.slice(0));
 
     //učitavanje tekstura
     await LoadTextures();
@@ -41,6 +51,9 @@ export class SlotMachine {
     let map1 = InitSprites();
     let map2 = InitSprites();
     let map3 = InitSprites();
+
+
+
 
     //instanciranje instanci reel objekta
     this.reel1 = new Reel(1, canvas1, 244, 244, map1, symbol_slot1);

@@ -155,7 +155,7 @@ export class Reel {
         //ukloni generator
         this.ClearYStepGenerator();
 
-        console.log("id: "+ this.reel_id+" " + this.SymbolSlots)
+        //console.log("id: "+ this.reel_id+" " + this.SymbolSlots)
 
         //kraj
         if(this.cb_finished){
