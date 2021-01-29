@@ -82,7 +82,7 @@ export class Reel {
     for (let ir = 0; ir < r; ir++) {
 
       //vertikalni pomak rolne u 1 frejmu
-      let vy = (this.symbolHeight / 6.0) * (speed_list[ir] ?? 1);
+      let vy = (this.symbolHeight / 6.0) * (speed_list[ir] ?? 5);
 
       //celobrojni ostatak visine sprajta nakon vertikalne translacije vy puta
       let rem = this.symbolHeight % vy;
