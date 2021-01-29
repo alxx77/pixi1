@@ -8,6 +8,7 @@ import {
   } from "./setup.js";
 
 import { PlayRound } from "./backend.js"
+import { checkHits } from "./paytable.js"
 
 
 //slot mašina
@@ -144,6 +145,7 @@ export class SlotMachine {
     await Promise.all([promiseSpinCompleted1,promiseSpinCompleted2,promiseSpinCompleted3])
 
     //obračun bodova
+    
 
 
   };
