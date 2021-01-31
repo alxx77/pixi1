@@ -54,7 +54,7 @@ export function checkTotalHits(reel_matrix, symbol_list) {
   let test_list=getTestList();
   return symbol_list.reduce((acc, el) =>{ 
       
-    acc.push(checkHitsForTestList(reel_matrix, el,test_list));
+    acc.push({symbol:el, test: checkHitsForTestList(reel_matrix, el,test_list)});
 
     return acc;
   
@@ -114,4 +114,35 @@ function checkHits(flat_reel_matrix, hit_test, symbol) {
           el.outside_map.every((x) => x === false),
       };
     });
+}
+
+
+
+
+let rmx31=[["01-lemon", "02-orange", "03-plum"],["01-lemon", "02-orange", "03-plum"],["01-lemon", "02-orange", "03-plum"]]
+let rmx32=[["04-cherry", "05-grapes", "06-watermelon"],["04-cherry", "05-grapes", "06-watermelon"],["01-lemon", "02-orange", "03-plum"]]
+let rmx33=[["04-cherry", "05-grapes", "06-watermelon"],[ "09-bell", "10-clover", "11-dollar"],["01-lemon", "02-orange", "03-plum"]]
+
+let rmx21=[ ["07-seven", "08-triple_seven", "09-bell"],[ "07-seven", "08-triple_seven", "09-bell"],["10-clover", "11-dollar", "12-triple_bar"]]
+let rmx22=[ ["07-seven", "08-triple_seven", "09-bell"],[ "10-clover", "11-dollar", "12-triple_bar"],[ "07-seven", "08-triple_seven", "09-bell"]]
+let rmx23=[ [  "03-plum", "04-cherry", "05-grapes"],["10-clover", "11-dollar", "12-triple_bar"],["10-clover", "11-dollar", "12-triple_bar"]]
+
+let rmx41=[ [  "03-plum", "04-cherry", "05-grapes"],["10-clover", "03-plum", "12-triple_bar"],["10-clover", "11-dollar",  "03-plum"]]
+let rmx42=[ [  "03-plum", "04-cherry", "05-grapes"],["10-clover", "05-grapes", "12-triple_bar"],["05-grapes", "11-dollar",  "03-plum"]]
+
+let symbol_list=["01-lemon", "02-orange", "03-plum", "04-cherry", "05-grapes", "06-watermelon", "07-seven", "08-triple_seven", "09-bell", "10-clover", "11-dollar", "12-triple_bar"]
+
+export function testPayTable(){
+    
+    console.dir(checkTotalHits(rmx31,symbol_list))
+    console.dir(checkTotalHits(rmx32,symbol_list))
+    console.dir(checkTotalHits(rmx33,symbol_list))
+
+    console.dir(checkTotalHits(rmx21,symbol_list))
+    console.dir(checkTotalHits(rmx22,symbol_list))
+    console.dir(checkTotalHits(rmx23,symbol_list))
+
+    console.dir(checkTotalHits(rmx41,symbol_list))
+    console.dir(checkTotalHits(rmx42,symbol_list))
+
 }

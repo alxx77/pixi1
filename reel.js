@@ -22,6 +22,7 @@ export class Reel {
 
     //svaka instanca klase ima svoj stage
     this.stage = new PIXI.Container();
+    this.stage.height=244*3
 
     //niz koji skladišti redosled simbola na rolni
     this.reelArray = reel_array;
@@ -46,8 +47,7 @@ export class Reel {
   
 
     //inicijalno postavljanje sprajtova u stage
-    //prođi kroz sva mesta za sprajtove +1
-    for (let i = 0; i < this.reelSize; i++) {
+     for (let i = 0; i < this.reelSize; i++) {
       //nađi sprajt za dati simbol
       let sprite = this.reelSpriteMap.get(this.reelArray[i]);
 
@@ -69,6 +69,8 @@ export class Reel {
     //dodavanje u parent kontejner
     this.container.addChild(this.stage);
 
+
+
   }
 
   //funkcija koja kreira odgovarajući generator
@@ -82,7 +84,7 @@ export class Reel {
     for (let ir = 0; ir < r; ir++) {
 
       //vertikalni pomak rolne u 1 frejmu
-      let vy = (this.symbolHeight / 6.0) * (speed_list[ir] ?? 5);
+      let vy = (this.symbolHeight / 6.0) * (speed_list[ir] ?? 2);
 
       //celobrojni ostatak visine sprajta nakon vertikalne translacije vy puta
       let rem = this.symbolHeight % vy;
@@ -188,7 +190,7 @@ export class Reel {
 
   //Kreiraj novu instancu generatora
   setYStepGeneratorInstance(r) {
-    this.yStepGenerator = this.getYStepGenerator(r + 12, []);
+    this.yStepGenerator = this.getYStepGenerator(r + 0, []);
   }
 
   //ukloni generator
