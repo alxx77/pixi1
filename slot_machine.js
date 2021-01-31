@@ -189,9 +189,14 @@ export class SlotMachine {
 
     //console.log(symbol_list)
 
+
     let hit_list = checkTotalHits(reel_matrix,['01-lemon']);
 
-    
+    //PIXI.Texture
+
+    setTimeout(() => {
+        this.reel1.stage.children[0].texture=PIXI.utils.TextureCache["01-lemon-hi"]
+      }, 500);
 
     //console.dir(hit_list)
 

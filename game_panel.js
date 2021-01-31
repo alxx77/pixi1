@@ -20,7 +20,7 @@ export class GamePanel{
         const mask = new PIXI.Sprite(PIXI.Texture.WHITE);
         mask.width = 244*3;
         mask.height =100;
-        this.stage.addChild(mask); // make sure mask it added to display list somewhere!
+        this.stage.addChild(mask);
         this.stage.mask = mask;
 
         this.spin_button.on('click', (event) => {

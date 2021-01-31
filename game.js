@@ -20,4 +20,4 @@ async function StartGame() {
 
 
 
-//StartGame()
+StartGame()
