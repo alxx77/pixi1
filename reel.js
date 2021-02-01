@@ -190,7 +190,7 @@ export class Reel {
 
   //Kreiraj novu instancu generatora
   setYStepGeneratorInstance(r) {
-    this.yStepGenerator = this.getYStepGenerator(r + 0, []);
+    this.yStepGenerator = this.getYStepGenerator(r + 12, []);
   }
 
   //ukloni generator
@@ -198,4 +198,10 @@ export class Reel {
     this.yStepGenerator = null;
     this.isSpinning = false;
   }
+
+  setTexture(visible_symbol_position,texture_name){
+      this.stage.children[visible_symbol_position].texture=PIXI.utils.TextureCache[texture_name];
+  }
+
+
 }

@@ -3,8 +3,8 @@ import { Reel } from "./reel.js";
 import {
   loadTextures,
   initSprites,
-  getReelSymbolTextureNames,
-  getBackroundSprite
+  getTextureNames,
+  getBackroundSprite,
 } from "./setup.js";
 
 import { PlayRound } from "./backend.js";
@@ -13,7 +13,7 @@ import { GamePanel } from "./game_panel.js"
 
 //slot mašina
 export class SlotMachine {
-  constructor(canvas) {
+  constructor(canvas,symbol_names) {
     this.canvas = canvas;
 
     //instance rolni
@@ -24,23 +24,21 @@ export class SlotMachine {
     //nov ticker objekt
     this.ticker = new PIXI.Ticker();
 
+    //lista imena simbola
+    this.symbol_names=symbol_names
+
     //kredit
     this.credit=0;
     this.bet=1;
   }
 
   async initMachine() {
-    //imena simbola na rolnama
-    let symbol_names = [];
-
-    getReelSymbolTextureNames().forEach((val, key) => {
-      symbol_names.push(key);
-    });
+    
 
     //kreiranje slučajnog redosleda simbola na rolnama
-    let symbol_slot1 =shuffleArray(symbol_names.slice(0));
-    let symbol_slot2 =shuffleArray(symbol_names.slice(0));
-    let symbol_slot3 =shuffleArray(symbol_names.slice(0));
+    let symbol_slot1 =shuffleArray(this.symbol_names.slice(0));
+    let symbol_slot2 =shuffleArray(this.symbol_names.slice(0));
+    let symbol_slot3 =shuffleArray(this.symbol_names.slice(0));
 
     //učitavanje tekstura
     await loadTextures();
@@ -185,7 +183,7 @@ export class SlotMachine {
     ];
 
 
-    let symbol_list = Array.from(getReelSymbolTextureNames().keys());
+    let symbol_list = Array.from(getTextureNames().keys());
 
     //console.log(symbol_list)
 
@@ -194,10 +192,10 @@ export class SlotMachine {
 
     //PIXI.Texture
 
-    setTimeout(() => {
+    /*setTimeout(() => {
         this.reel1.stage.children[0].texture=PIXI.utils.TextureCache["01-lemon-hi"]
       }, 500);
-
+*/
     //console.dir(hit_list)
 
   };
