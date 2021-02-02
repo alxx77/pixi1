@@ -190,7 +190,7 @@ export class Reel {
 
   //Kreiraj novu instancu generatora
   setYStepGeneratorInstance(r) {
-    this.yStepGenerator = this.getYStepGenerator(r + 12, []);
+    this.yStepGenerator = this.getYStepGenerator(r + 0, []);
   }
 
   //ukloni generator

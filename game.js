@@ -1,6 +1,7 @@
 
 import { SlotMachine } from "./slot_machine.js"
-import { SYMBOL_NAMES } from "./setup.js"
+import { SYMBOL_NAMES,CURRENCY_SIGN } from "./setup.js"
+import { testPayTable} from "./paytable.js"
 
 
 
@@ -11,14 +12,14 @@ async function StartGame() {
      const canvas1 = document.getElementById("mycanvas1");
 
 
-    let slot_machine=new SlotMachine(canvas1,SYMBOL_NAMES);
+    let slot_machine=new SlotMachine(canvas1,SYMBOL_NAMES,CURRENCY_SIGN);
 
     await slot_machine.initMachine();
 
-    slot_machine.startSlotMachine();
+    slot_machine.setCreditAmount(100)
+
+    slot_machine.startAnimation();
 
 }
-
-
 
 StartGame()

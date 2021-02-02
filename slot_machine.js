@@ -1,19 +1,18 @@
 import { shuffleArray } from "./helper_fn.js";
 import { Reel } from "./reel.js";
-import {
-  loadTextures,
-  initSprites,
-  getTextureNames,
-  getBackroundSprite,
-} from "./setup.js";
+import { loadTextures, initSprites, getBackroundSprite } from "./setup.js";
 
 import { PlayRound } from "./backend.js";
 import { checkTotalHits } from "./paytable.js";
-import { GamePanel } from "./game_panel.js"
+import { GamePanel } from "./game_panel.js";
+import {
+  winSymbolsFlicker2Hits,
+  winSymbolsFlicker3Hits,
+} from "./win_animations.js";
 
 //slot mašina
 export class SlotMachine {
-  constructor(canvas,symbol_names) {
+  constructor(canvas, symbol_names, currency_sign) {
     this.canvas = canvas;
 
     //instance rolni
@@ -25,20 +24,35 @@ export class SlotMachine {
     this.ticker = new PIXI.Ticker();
 
     //lista imena simbola
-    this.symbol_names=symbol_names
+    this.symbol_names = symbol_names;
+
+    //simbol valute kredita
+    this.currency_sign = currency_sign;
 
     //kredit
-    this.credit=0;
-    this.bet=1;
+    this.credit_amount = 0;
+    this.bet_amount = 0;
+
+    //panel
+    this.game_panel = null;
+
+    //da li otkazana animacija
+    this.win_anim_cancel = { value: false };
+    this.is_anim_running={value:false}
   }
 
   async initMachine() {
-    
-
     //kreiranje slučajnog redosleda simbola na rolnama
-    let symbol_slot1 =shuffleArray(this.symbol_names.slice(0));
-    let symbol_slot2 =shuffleArray(this.symbol_names.slice(0));
-    let symbol_slot3 =shuffleArray(this.symbol_names.slice(0));
+
+    let symbol_slot1 = shuffleArray(this.symbol_names.slice(0));
+    let symbol_slot2 = shuffleArray(this.symbol_names.slice(0));
+    let symbol_slot3 = shuffleArray(this.symbol_names.slice(0));
+
+    /*
+    let symbol_slot1 =(this.symbol_names.slice(0));
+    let symbol_slot2 =(this.symbol_names.slice(0));
+    let symbol_slot3 =(this.symbol_names.slice(0));
+    */
 
     //učitavanje tekstura
     await loadTextures();
@@ -48,61 +62,65 @@ export class SlotMachine {
     let map2 = initSprites();
     let map3 = initSprites();
 
-    
     //root kontejner
     let stage = new PIXI.Container();
-   
-
 
     //renderer
     let renderer = new PIXI.Renderer({
       view: this.canvas,
       width: document.documentElement.clientWidth,
       height: document.documentElement.clientHeight,
-      resolution:window.devicePixelRatio,
-      autoDensity:true
+      resolution: window.devicePixelRatio,
+      autoDensity: true,
     });
 
-    window.addEventListener("resize",resize);
+    window.addEventListener("resize", resize);
 
-    function resize(){
-        let w= document.documentElement.clientWidth;
+    function resize() {
+      let w = document.documentElement.clientWidth;
 
-        let h=document.documentElement.clientHeight;
+      let h = document.documentElement.clientHeight;
 
-        renderer.resize(w,h);
-        console.log(w,h)
+      renderer.resize(w, h);
+      console.log(w, h);
     }
 
-
-    var viewWidth = (renderer.width / renderer.resolution);
+    var viewWidth = renderer.width / renderer.resolution;
     var back = new PIXI.Container();
     back.scale.x = 1920 / viewWidth;
     back.scale.y = back.scale.x;
-    back.addChild(getBackroundSprite())
+    back.addChild(getBackroundSprite());
     stage.addChild(back);
 
     //stage za kontrole
-    let game_panel=new GamePanel(244*3,this.spinReels)
-    game_panel.stage.y=244*3
+    this.game_panel = new GamePanel(
+      244 * 3,
+      this.currency_sign,
+      this.spinReels
+    );
+    this.game_panel.stage.y = 244 * 3;
 
+    stage.addChild(this.game_panel.stage);
 
-    stage.addChild(game_panel.stage)
-
-    let reel_stage=new PIXI.Container();
-    reel_stage.x=200
+    //stage za rolne
+    let reel_stage = new PIXI.Container();
+    reel_stage.x = 200;
     const mask = new PIXI.Sprite(PIXI.Texture.WHITE);
-    mask.width = 244*3;
-    mask.height =244*3;
-    reel_stage.addChild(mask); // make sure mask it added to display list somewhere!
+    mask.width = 244 * 3;
+    mask.height = 244 * 3;
+    reel_stage.addChild(mask);
     reel_stage.mask = mask;
+
+    //iznos uloga
+    this.bet_amount = 1;
+    this.game_panel.updateBetAmountText(this.bet_amount);
 
     //instanciranje instanci reel objekta
     this.reel1 = new Reel(1, reel_stage, 244, 244, map1, symbol_slot1, 0);
     this.reel2 = new Reel(2, reel_stage, 244, 244, map2, symbol_slot2, 244);
     this.reel3 = new Reel(3, reel_stage, 244, 244, map3, symbol_slot3, 244 * 2);
 
-    stage.addChild(reel_stage)
+    stage.addChild(reel_stage);
 
     //dodavanje render funkcija objekata u ticker obj.
     this.ticker.add(() => {
@@ -114,8 +132,6 @@ export class SlotMachine {
       //rendering
       renderer.render(stage);
     });
-
-    
   }
 
   //igranje runde
@@ -124,14 +140,18 @@ export class SlotMachine {
     if (this.reel1.isSpinning || this.reel2.isSpinning || this.reel3.isSpinning)
       return;
 
+    //prekini animaciju na rolnama ukoliko možda je u toku
+    if(this.is_anim_running===true)
+    this.win_anim_cancel = {value:true};
+
+    //umanji kredit za iznos uloga
+    this.credit_amount -= this.bet_amount;
+    this.game_panel.updateCreditAmountText(this.credit_amount);
+
+    this.game_panel.updateWinAmountText(0);
+
     //odigravanje runde
     let [r1, r2, r3] = PlayRound();
-
-    //console.log("symbol_slot 1: " + this.symbol_slot1);
-    //console.log("symbol_slot 2: " + symbol_slot2);
-    //console.log("symbol_slot 3: " + symbol_slot3);
-
-    console.log(r1, r2, r3);
 
     //kraj okretanja 1. rolne
     let promiseSpinCompleted1 = new Promise((resolve, reject) => {
@@ -177,18 +197,17 @@ export class SlotMachine {
     //obračun bodova
     //podaci sa sve 3 rolne
     let reel_matrix = [
-     this.reel1.reelArray.slice(0, 3),
-     this.reel2.reelArray.slice(0, 3),
-     this.reel3.reelArray.slice(0, 3),
+      this.reel1.reelArray.slice(0, 3),
+      this.reel2.reelArray.slice(0, 3),
+      this.reel3.reelArray.slice(0, 3),
     ];
 
+    //console.log(this.symbol_names)
+    console.log(this.reel1.reelArray);
+    console.log(this.reel2.reelArray);
+    console.log(this.reel3.reelArray);
 
-    let symbol_list = Array.from(getTextureNames().keys());
-
-    //console.log(symbol_list)
-
-
-    let hit_list = checkTotalHits(reel_matrix,['01-lemon']);
+    let hit_list = checkTotalHits(reel_matrix, this.symbol_names);
 
     //PIXI.Texture
 
@@ -196,23 +215,54 @@ export class SlotMachine {
         this.reel1.stage.children[0].texture=PIXI.utils.TextureCache["01-lemon-hi"]
       }, 500);
 */
-    //console.dir(hit_list)
+    console.dir(hit_list);
 
+    hit_list.forEach((element) => {
+      let test = element.test;
+
+      //ako postoji pogodak
+      if (test.length > 0) {
+        let data = test[0];
+
+        //2 provera
+        if (data.hit === true) {
+          //this.reel1.setTexture(0,"01-lemon_low2")
+
+          //dodaj iznos opklade na kredit
+          this.credit_amount += this.bet_amount;
+
+          //osveži ispis kredita
+          this.game_panel.updateCreditAmountText(this.credit_amount);
+
+          //oveži ispis dobitka
+          this.game_panel.updateWinAmountText(this.bet_amount);
+
+          //treperenje simbola koji su pogođeni
+          this.win_anim_cancel={value:false}
+
+          if (data.id.slice(0, 4) === "hit2") {
+            winSymbolsFlicker2Hits(this, element,this.is_anim_running, this.win_anim_cancel);
+          } else {
+            winSymbolsFlicker3Hits(this, element,this.is_anim_running, this.win_anim_cancel);
+          }
+        }
+      }
+    });
   };
 
   //start
-  startSlotMachine() {
+  startAnimation() {
     //start animacije
     this.ticker.start();
   }
 
-
-  setCreditAmount(cr){
-    let c=Number.parseFloat(cr);
-    if(c>0){
-        this.credit=c;
+  setCreditAmount(cr) {
+    let c = Number.parseFloat(cr);
+    if (c > 0) {
+      this.credit_amount = c;
     }
 
+    //ui update
+    this.game_panel.updateCreditAmountText(this.credit_amount);
   }
-
 }

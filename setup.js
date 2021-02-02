@@ -14,7 +14,7 @@ export const SYMBOL_NAMES = [
   "12-triple_bar",
 ];
 
-
+export const CURRENCY_SIGN="$"
 
 export function getTextureNames() {
   let x = new Map();
@@ -33,18 +33,18 @@ export function getTextureNames() {
   x.set("11-dollar_low", "./rsc/dollar_low.png");
   x.set("12-triple_bar_low", "./rsc/triple_bar_low.png");
 
-  x.set("01-lemon-hi", "./rsc/lemon_hi.png");
-  x.set("02-orange-hi", "./rsc/orange_hi.png");
-  x.set("03-plum-hi", "./rsc/plum_hi.png");
-  x.set("04-cherry-hi", "./rsc/cherry_hi.png");
-  x.set("05-grapes-hi", "./rsc/grapes_hi.png");
-  x.set("06-watermelon-hi", "./rsc/watermelon_hi.png");
-  x.set("07-seven-hi", "./rsc/7_hi.png");
-  x.set("08-triple_seven-hi", "./rsc/777_hi.png");
-  x.set("09-bell-hi", "./rsc/bell_hi.png");
-  x.set("10-clover-hi", "./rsc/4l_clover_hi.png");
-  x.set("11-dollar-hi", "./rsc/dollar_hi.png");
-  x.set("12-triple_bar-hi", "./rsc/triple_bar_hi.png");
+  x.set("01-lemon_hi", "./rsc/lemon_hi.png");
+  x.set("02-orange_hi", "./rsc/orange_hi.png");
+  x.set("03-plum_hi", "./rsc/plum_hi.png");
+  x.set("04-cherry_hi", "./rsc/cherry_hi.png");
+  x.set("05-grapes_hi", "./rsc/grapes_hi.png");
+  x.set("06-watermelon_hi", "./rsc/watermelon_hi.png");
+  x.set("07-seven_hi", "./rsc/7_hi.png");
+  x.set("08-triple_seven_hi", "./rsc/777_hi.png");
+  x.set("09-bell_hi", "./rsc/bell_hi.png");
+  x.set("10-clover_hi", "./rsc/4l_clover_hi.png");
+  x.set("11-dollar_hi", "./rsc/dollar_hi.png");
+  x.set("12-triple_bar_hi", "./rsc/triple_bar_hi.png");
 
   x.set("01-lemon_low2", "./rsc/lemon_low2.png");
   x.set("02-orange_low2", "./rsc/orange_low2.png");
