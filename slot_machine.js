@@ -6,8 +6,7 @@ import { PlayRound } from "./backend.js";
 import { checkTotalHits } from "./paytable.js";
 import { GamePanel } from "./game_panel.js";
 import {
-  winSymbolsFlicker2Hits,
-  winSymbolsFlicker3Hits,
+  winSymbolsFlicker
 } from "./win_animations.js";
 
 //slot mašina
@@ -36,9 +35,27 @@ export class SlotMachine {
     //panel
     this.game_panel = null;
 
-    //da li otkazana animacija
-    this.win_anim_cancel = { value: false };
-    this.is_anim_running={value:false}
+    //da li treba prekinuti animaciju
+    this.cancel_animation = false;
+
+    //da li je neka animacija trenutno u toku
+    this._is_animation_running = false;
+
+    this.cb_notify_animation_stopped = null;
+  }
+
+  get is_animation_running() {
+    return this._is_animation_running;  
+  }
+
+  set is_animation_running(value) {
+    this._is_animation_running = value;
+    if (value === false) {
+      if (this.cb_notify_animation_stopped) {
+        if (this.cb_notify_animation_stopped instanceof Function) this.cb_notify_animation_stopped();
+      }
+      console.log("slot machine: animation stopped/ended")
+    }
   }
 
   async initMachine() {
@@ -134,15 +151,46 @@ export class SlotMachine {
     });
   }
 
+
   //igranje runde
+  //******************************** */
   spinReels = async () => {
+    console.log("spin reels")
     //provera da li se rolne vrte, ako da ne radi ništa
-    if (this.reel1.isSpinning || this.reel2.isSpinning || this.reel3.isSpinning)
+    if (this.reel1.isSpinning || this.reel2.isSpinning || this.reel3.isSpinning){
+      console.log("already spinning")
       return;
+    }
+      
 
     //prekini animaciju na rolnama ukoliko možda je u toku
-    if(this.is_anim_running===true)
-    this.win_anim_cancel = {value:true};
+    //i sačekaj da funkcija završi
+    if (this.is_animation_running === true) {
+
+      let animation_stopped =  new Promise((resolve) => {
+        this.cb_notify_animation_stopped = () => {
+          resolve();
+        };
+      });
+
+      console.log("stopping currently running animation")
+      //zaustavi animaciju
+      this.cancel_animation = true;
+
+      //sačekaj da završi
+      await animation_stopped;
+
+      //očisti cb
+      this.cb_notify_animation_stopped=null;
+
+      //vrati fleg
+      this.cancel_animation=false;
+
+      //nastavi dalje 
+      console.log("awaited stopping process")
+           
+     
+    }
 
     //umanji kredit za iznos uloga
     this.credit_amount -= this.bet_amount;
@@ -203,21 +251,16 @@ export class SlotMachine {
     ];
 
     //console.log(this.symbol_names)
-    console.log(this.reel1.reelArray);
-    console.log(this.reel2.reelArray);
-    console.log(this.reel3.reelArray);
+    //console.log(this.reel1.reelArray);
+    //console.log(this.reel2.reelArray);
+    //console.log(this.reel3.reelArray);
 
     let hit_list = checkTotalHits(reel_matrix, this.symbol_names);
 
-    //PIXI.Texture
 
-    /*setTimeout(() => {
-        this.reel1.stage.children[0].texture=PIXI.utils.TextureCache["01-lemon-hi"]
-      }, 500);
-*/
     console.dir(hit_list);
 
-    hit_list.forEach((element) => {
+    for await ( let element of hit_list) {
       let test = element.test;
 
       //ako postoji pogodak
@@ -236,18 +279,13 @@ export class SlotMachine {
 
           //oveži ispis dobitka
           this.game_panel.updateWinAmountText(this.bet_amount);
+       
+          //animacija
+          await winSymbolsFlicker(this, element);
 
-          //treperenje simbola koji su pogođeni
-          this.win_anim_cancel={value:false}
-
-          if (data.id.slice(0, 4) === "hit2") {
-            winSymbolsFlicker2Hits(this, element,this.is_anim_running, this.win_anim_cancel);
-          } else {
-            winSymbolsFlicker3Hits(this, element,this.is_anim_running, this.win_anim_cancel);
-          }
         }
       }
-    });
+    };
   };
 
   //start

@@ -1,95 +1,85 @@
-export async function winSymbolsFlicker2Hits(
-  slot_machine,
-  hit_test_element,
-  is_running,
-  cancel
-) {
+export async function winSymbolsFlicker(slot_machine, hit_test_element) {
 
-  is_running.value=true;
+  console.dir("fn - animation started");
 
-  let symbol = hit_test_element.symbol;
-  let test = hit_test_element.test[0];
-
-  let reel1hitmap = test.hit_map.slice(0, 3);
-  let reel2hitmap = test.hit_map.slice(3, 6);
-  let reel3hitmap = test.hit_map.slice(6, 9);
-
-  let hit_test_list = [reel1hitmap, reel2hitmap, reel3hitmap];
-  let reels = [slot_machine.reel1, slot_machine.reel2, slot_machine.reel3];
-
-  //prođi kroz sve rolne
-  [0, 1, 2].forEach((reel) => {
-    //kroz svaku poziciju
-    [0, 1, 2].forEach(async (position) => {
-      //ako postoji poklapanje
-      if (hit_test_list[reel][position] === 1) {
-        //kruži različite teksture
-        for (let i of [1, 2, 3, 4, 5, 6, 7]) {
-          if (cancel.value === true) {
-            console.log("canceled")
-            is_running.value=false;
-            return;
-          }
-          await cycleSymbolTexture(reels[reel], position, symbol);
-        }
-      }
-    });
-  });
-
-  is_running.value=false;
-
-}
-
-export function winSymbolsFlicker3Hits(slot_machine, hit_test_element) {
-  console.log("hit 3 animation");
-  let symbol = hit_test_element.symbol;
-  let test = hit_test_element.test[0];
-
-  let reel1hitmap = test.hit_map.slice(0, 3);
-  let reel2hitmap = test.hit_map.slice(3, 6);
-  let reel3hitmap = test.hit_map.slice(6, 9);
-
-  let hit_test_list = [reel1hitmap, reel2hitmap, reel3hitmap];
-  let reels = [slot_machine.reel1, slot_machine.reel2, slot_machine.reel3];
-
-  //prođi kroz sve rolne
-  [0, 1, 2].forEach(async (reel) => {
-    //kroz svaku poziciju
-    for await (let position of [0, 1, 2]) {
-      let p = new Promise(async (resolve) => {
-        //ako postoji poklapanje
-        if (hit_test_list[reel][position] === 1) {
-          //kruži različite teksture
-          for (let i of [1, 2, 3]) {
-            await cycleSymbolTexture(reels[reel], position, symbol);
-          }
-        }
-        resolve();
-      });
-    }
-  });
-}
-
-async function cycleSymbolTexture(reel, position, symbol) {
-  async function Delay(n) {
-    return new Promise((resolve) =>
-      setTimeout(() => {
-        resolve();
-      }, n)
-    );
+  if (slot_machine.reel1.isSpinning || slot_machine.reel2.isSpinning || slot_machine.reel3.isSpinning){
+    console.log("fn - animation: reels spinning; exit")
+    return;
   }
 
-  await Delay(50);
+  //ako neka animacija već traje izađi
+  if (slot_machine.is_animation_running === true) {
+    console.log("fn - animation already running");
+    return;
+  }
 
-  reel.setTexture(position, symbol + "_hi");
+  //postavi fleg
+  slot_machine.is_animation_running = true;
 
-  await Delay(250);
+  let symbol = hit_test_element.symbol;
+  let hit_map = hit_test_element.test[0].hit_map;
 
-  reel.setTexture(position, symbol + "_low2");
+  //svi vidljivi delovi rolni prebačeni u niz
+  let flatmatrix = [
+    ...slot_machine.reel1.reelArray.slice(0, 3),
+    ...slot_machine.reel2.reelArray.slice(0, 3),
+    ...slot_machine.reel3.reelArray.slice(0, 3),
+  ];
 
-  await Delay(100);
+  //ciklusi treperenja
+  for (let i of [1, 2, 3, 4, 5]) {
+    //proveri zahtev za prekidom
+    //ako postoji postavi fleg i izađi
+    if (slot_machine.cancel_animation === true) {
+      slot_machine.is_animation_running = false;
+      console.log("fn - animation early exit");
+      return;
+    }
 
-  reel.setTexture(position, symbol + "_low");
+    //animacija
+    await Delay(50);
 
-  await Delay(50);
+    //postavljanje svega na hi
+    switchTextures(slot_machine, hit_map, "_hi");
+
+    await Delay(100);
+
+    //low2
+    switchTextures(slot_machine, hit_map, "_low2");
+
+    await Delay(100);
+
+    //normal
+    switchTextures(slot_machine, hit_map, "_low");
+
+    await Delay(50);
+  }
+  //postavi fleg da je gotovo
+  console.dir("fn - animation finished");
+  slot_machine.is_animation_running = false;
+}
+
+async function Delay(n) {
+  return new Promise((resolve) =>
+    setTimeout(() => {
+      resolve();
+    }, n)
+  );
+}
+
+function switchTextures(slot_machine, hit_map, texture_state) {
+  for (let [idx, value] of hit_map.entries()) {
+    if (value === 1) {
+      if (idx >= 0 && idx <= 2) {
+        slot_machine.reel1.setTexture(idx, texture_state);
+      }
+      if (idx >= 3 && idx <= 5) {
+        slot_machine.reel2.setTexture(idx - 3, texture_state);
+      }
+
+      if (idx >= 6 && idx <= 8) {
+        slot_machine.reel3.setTexture(idx - 6, texture_state);
+      }
+    }
+  }
 }

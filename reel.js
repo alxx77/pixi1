@@ -199,8 +199,9 @@ export class Reel {
     this.isSpinning = false;
   }
 
-  setTexture(visible_symbol_position,texture_name){
-      this.stage.children[visible_symbol_position].texture=PIXI.utils.TextureCache[texture_name];
+  setTexture(visible_symbol_position,texture_state){
+    if (this.isSpinning) return;
+      this.stage.children[visible_symbol_position].texture=PIXI.utils.TextureCache[this.reelArray[visible_symbol_position]+texture_state];
   }
 
 
