@@ -1,7 +1,7 @@
 
 import { SlotMachine } from "./slot_machine.js"
 import { SYMBOL_NAMES,CURRENCY_SIGN } from "./setup.js"
-import { testPayTable} from "./paytable.js"
+
 
 
 

@@ -103,3 +103,19 @@ export function getBackroundSprite() {
   //pozadina
   return new PIXI.Sprite(PIXI.utils.TextureCache["background"]);
 }
+
+//HTML5 sound element
+export function sound(src) {
+  this.sound = document.createElement("audio");
+  this.sound.src = src;
+  this.sound.setAttribute("preload", "auto");
+  this.sound.setAttribute("controls", "none");
+  this.sound.style.display = "none";
+  document.body.appendChild(this.sound);
+  this.play = function(){
+    this.sound.play();
+  }
+  this.stop = function(){
+    this.sound.pause();
+  }
+} 

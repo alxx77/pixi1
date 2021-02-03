@@ -1,13 +1,16 @@
 import { shuffleArray } from "./helper_fn.js";
 import { Reel } from "./reel.js";
-import { loadTextures, initSprites, getBackroundSprite } from "./setup.js";
+import {
+  loadTextures,
+  initSprites,
+  getBackroundSprite,
+  sound,
+} from "./setup.js";
 
 import { PlayRound } from "./backend.js";
 import { checkTotalHits } from "./paytable.js";
 import { GamePanel } from "./game_panel.js";
-import {
-  winSymbolsFlicker
-} from "./win_animations.js";
+import { winSymbolsFlicker } from "./win_animations.js";
 
 //slot mašina
 export class SlotMachine {
@@ -41,35 +44,65 @@ export class SlotMachine {
     //da li je neka animacija trenutno u toku
     this._is_animation_running = false;
 
+    //callback za obaveštenje o zaustavljanju animacije
     this.cb_notify_animation_stopped = null;
+
+    //zvuk********************************************
+    //klik zvuk dugmeta
+    this.spin_button_click = new sound("./rsc/spin-button_click.mp3");
+
+    //osnovni dobitak
+    this.small_win_sound = new sound("./rsc/small_win.mp3");
+
+    this.small_win_sound.sound.onended = (e) => {
+      if (this.cb_small_win_sound_ended) {
+        if (this.cb_small_win_sound_ended instanceof Function)
+          this.cb_small_win_sound_ended();
+      }
+    };
+
+    this.cb_small_win_sound_ended = null;
+
+    //srednji dobitak
+    this.mid_win_sound = new sound("./rsc/mid_win.mp3");
+
+    //jackpot
+    this.jackpot_sound = new sound("./rsc/jackpot.mp3");
+
+    //notifikacija
+    this.accent_sound = new sound("./rsc/accent.mp3");
   }
 
+  //getter
   get is_animation_running() {
-    return this._is_animation_running;  
+    return this._is_animation_running;
   }
 
+  //setter
   set is_animation_running(value) {
     this._is_animation_running = value;
     if (value === false) {
       if (this.cb_notify_animation_stopped) {
-        if (this.cb_notify_animation_stopped instanceof Function) this.cb_notify_animation_stopped();
+        if (this.cb_notify_animation_stopped instanceof Function)
+          this.cb_notify_animation_stopped();
       }
-      console.log("slot machine: animation stopped/ended")
+      console.log("slot machine: animation stopped/ended");
     }
   }
 
+  //inicijalizacija
   async initMachine() {
     //kreiranje slučajnog redosleda simbola na rolnama
 
+    /*
     let symbol_slot1 = shuffleArray(this.symbol_names.slice(0));
     let symbol_slot2 = shuffleArray(this.symbol_names.slice(0));
     let symbol_slot3 = shuffleArray(this.symbol_names.slice(0));
+*/
 
-    /*
-    let symbol_slot1 =(this.symbol_names.slice(0));
-    let symbol_slot2 =(this.symbol_names.slice(0));
-    let symbol_slot3 =(this.symbol_names.slice(0));
-    */
+    let symbol_slot1 = this.symbol_names.slice(0);
+    let symbol_slot2 = this.symbol_names.slice(0);
+    let symbol_slot3 = this.symbol_names.slice(0);
 
     //učitavanje tekstura
     await loadTextures();
@@ -99,7 +132,6 @@ export class SlotMachine {
       let h = document.documentElement.clientHeight;
 
       renderer.resize(w, h);
-      console.log(w, h);
     }
 
     var viewWidth = renderer.width / renderer.resolution;
@@ -129,7 +161,7 @@ export class SlotMachine {
     reel_stage.mask = mask;
 
     //iznos uloga
-    this.bet_amount = 1;
+    this.bet_amount = 10;
     this.game_panel.updateBetAmountText(this.bet_amount);
 
     //instanciranje instanci reel objekta
@@ -151,29 +183,41 @@ export class SlotMachine {
     });
   }
 
-
   //igranje runde
   //******************************** */
+  //******************************** */
   spinReels = async () => {
-    console.log("spin reels")
+    console.log("spin reels");
+
+    //zvuk - klik spin dugmeta
+    this.spin_button_click.play();
+
     //provera da li se rolne vrte, ako da ne radi ništa
-    if (this.reel1.isSpinning || this.reel2.isSpinning || this.reel3.isSpinning){
-      console.log("already spinning")
+    if (
+      this.reel1.isSpinning ||
+      this.reel2.isSpinning ||
+      this.reel3.isSpinning
+    ) {
+      console.log("already spinning");
       return;
     }
-      
+
+    //proveri kredit
+    if (this.credit_amount - this.bet_amount < 0) {
+      //nedovoljno kredita
+      return;
+    }
 
     //prekini animaciju na rolnama ukoliko možda je u toku
     //i sačekaj da funkcija završi
     if (this.is_animation_running === true) {
-
-      let animation_stopped =  new Promise((resolve) => {
+      let animation_stopped = new Promise((resolve) => {
         this.cb_notify_animation_stopped = () => {
           resolve();
         };
       });
 
-      console.log("stopping currently running animation")
+      console.log("stopping currently running animation");
       //zaustavi animaciju
       this.cancel_animation = true;
 
@@ -181,15 +225,13 @@ export class SlotMachine {
       await animation_stopped;
 
       //očisti cb
-      this.cb_notify_animation_stopped=null;
+      this.cb_notify_animation_stopped = null;
 
       //vrati fleg
-      this.cancel_animation=false;
+      this.cancel_animation = false;
 
-      //nastavi dalje 
-      console.log("awaited stopping process")
-           
-     
+      //nastavi dalje
+      console.log("awaited stopping process");
     }
 
     //umanji kredit za iznos uloga
@@ -223,14 +265,14 @@ export class SlotMachine {
     });
 
     //pokretanje slotova
-    this.reel1.spinReel(r1);
+    this.reel1.spinReel(1);
 
     setTimeout(() => {
-      this.reel2.spinReel(r2);
+      this.reel2.spinReel(2);
     }, 50);
 
     setTimeout(() => {
-      this.reel3.spinReel(r3);
+      this.reel3.spinReel(1);
     }, 100);
 
     //čekanje da sve rolne stanu završe...
@@ -257,11 +299,12 @@ export class SlotMachine {
 
     let hit_list = checkTotalHits(reel_matrix, this.symbol_names);
 
-
     console.dir(hit_list);
 
-    for await ( let element of hit_list) {
+    for await (let element of hit_list) {
       let test = element.test;
+
+      console.log("test - element: " + element)
 
       //ako postoji pogodak
       if (test.length > 0) {
@@ -269,23 +312,135 @@ export class SlotMachine {
 
         //2 provera
         if (data.hit === true) {
-          //this.reel1.setTexture(0,"01-lemon_low2")
+          let payout_factor = Number.parseInt(data.payout);
 
           //dodaj iznos opklade na kredit
-          this.credit_amount += this.bet_amount;
+          this.credit_amount += payout_factor * this.bet_amount;
 
-          //osveži ispis kredita
-          this.game_panel.updateCreditAmountText(this.credit_amount);
+          //zvuk
 
-          //oveži ispis dobitka
-          this.game_panel.updateWinAmountText(this.bet_amount);
-       
-          //animacija
-          await winSymbolsFlicker(this, element);
+          //2 ista
+          if (data.id.slice(0, 4) === "hit2") {
+            //promis za čekanje kraja zvuka
+            let sound_ended = new Promise((resolve) => {
+              this.cb_small_win_sound_ended = () => {
+                resolve();
+              };
+            });
 
+            this.small_win_sound.play();
+
+            //animacija
+            await winSymbolsFlicker(this, element);
+
+            //sačekaj da završi
+            await sound_ended;
+
+            //očisti cb
+            this.cb_small_win_sound_ended = null;
+
+            //pokrenti zvuk notifikacije
+            //this.accent_sound.play();
+
+            //osveži UI
+            //osveži ispis kredita
+            this.game_panel.updateCreditAmountText(this.credit_amount);
+
+            //oveži ispis dobitka
+            this.game_panel.updateWinAmountText(
+              payout_factor * this.bet_amount
+            );
+          }
+
+          //3 ista
+          if (
+            data.id.slice(0, 4) === "hit3" &&
+            [
+              "01-lemon",
+              "02-orange",
+              "03-plum",
+              "04-cherry",
+              "05-grapes",
+              "06-watermelon",
+              "08-triple_seven",
+              "09-bell",
+              "10-clover",
+              "11-dollar",
+              "12-triple_bar",
+            ].includes(data.symbol)
+          ) {
+            //pokrenti zvuk
+            this.mid_win_sound.play();
+
+            //osveži UI
+            //osveži ispis kredita
+            this.game_panel.updateCreditAmountText(this.credit_amount);
+
+            //oveži ispis dobitka
+            this.game_panel.updateWinAmountText(
+              payout_factor * this.bet_amount
+            );
+          } else if (
+            data.id.slice(0, 4) === "hit3" &&
+            data.symbol === "07-seven"
+          ) {
+            this.jackpot_sound.play();
+
+            //osveži UI
+            //osveži ispis kredita
+            this.game_panel.updateCreditAmountText(this.credit_amount);
+
+            //oveži ispis dobitka
+            this.game_panel.updateWinAmountText(
+              payout_factor * this.bet_amount
+            );
+          }
+
+          //dijagonale
+          if (
+            (data.id === "hit0Diag" || data.id === "hit1Diag") &&
+            [
+              "01-lemon",
+              "02-orange",
+              "03-plum",
+              "04-cherry",
+              "05-grapes",
+              "06-watermelon",
+              "08-triple_seven",
+              "09-bell",
+              "10-clover",
+              "11-dollar",
+              "12-triple_bar",
+            ].includes(data.symbol)
+          ) {
+            this.mid_win_sound.play();
+
+            //osveži UI
+            //osveži ispis kredita
+            this.game_panel.updateCreditAmountText(this.credit_amount);
+
+            //oveži ispis dobitka
+            this.game_panel.updateWinAmountText(
+              payout_factor * this.bet_amount
+            );
+          } else if (
+            (data.id === "hit0Diag" || data.id === "hit1Diag") &&
+            data.symbol === "07-seven"
+          ) {
+            this.jackpot_sound.play();
+
+            //osveži UI
+            //osveži ispis kredita
+            this.game_panel.updateCreditAmountText(this.credit_amount);
+
+            //oveži ispis dobitka
+            this.game_panel.updateWinAmountText(
+              payout_factor * this.bet_amount
+            );
+          }
         }
       }
-    };
+    }
   };
 
   //start

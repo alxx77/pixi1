@@ -84,7 +84,7 @@ export class Reel {
     for (let ir = 0; ir < r; ir++) {
 
       //vertikalni pomak rolne u 1 frejmu
-      let vy = (this.symbolHeight / 6.0) * (speed_list[ir] ?? 2);
+      let vy = (this.symbolHeight / 6.0) * (speed_list[ir] ?? 5);
 
       //celobrojni ostatak visine sprajta nakon vertikalne translacije vy puta
       let rem = this.symbolHeight % vy;
@@ -190,7 +190,7 @@ export class Reel {
 
   //Kreiraj novu instancu generatora
   setYStepGeneratorInstance(r) {
-    this.yStepGenerator = this.getYStepGenerator(r + 0, []);
+    this.yStepGenerator = this.getYStepGenerator(r + 12, []);
   }
 
   //ukloni generator
