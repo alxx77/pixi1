@@ -27,7 +27,7 @@ export async function winSymbolsFlicker(slot_machine, hit_test_element) {
   ];
 
   //ciklusi treperenja
-  for (let i of [1, 2, 3, 4, 5]) {
+  for await (let i of [1, 2, 3, 4, 5]) {
     //proveri zahtev za prekidom
     //ako postoji postavi fleg i izađi
     if (slot_machine.cancel_animation === true) {
@@ -57,6 +57,8 @@ export async function winSymbolsFlicker(slot_machine, hit_test_element) {
   //postavi fleg da je gotovo
   console.dir("fn - animation finished");
   slot_machine.is_animation_running = false;
+
+  return;
 }
 
 async function Delay(n) {
