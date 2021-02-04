@@ -35,6 +35,9 @@ export class SlotMachine {
     this.credit_amount = 0;
     this.bet_amount = 0;
 
+    //brojač rundi
+    this.counter=0;
+
     //panel
     this.game_panel = null;
 
@@ -118,15 +121,10 @@ export class SlotMachine {
   async initMachine() {
     //kreiranje slučajnog redosleda simbola na rolnama
 
-    /*
+    
     let symbol_slot1 = shuffleArray(this.symbol_names.slice(0));
     let symbol_slot2 = shuffleArray(this.symbol_names.slice(0));
     let symbol_slot3 = shuffleArray(this.symbol_names.slice(0));
-*/
-
-    let symbol_slot1 = this.symbol_names.slice(0);
-    let symbol_slot2 = this.symbol_names.slice(0);
-    let symbol_slot3 = this.symbol_names.slice(0);
 
     //učitavanje tekstura
     await loadTextures();
@@ -207,6 +205,7 @@ export class SlotMachine {
     });
   }
 
+
   //igranje runde
   //******************************** */
   //******************************** */
@@ -254,6 +253,11 @@ export class SlotMachine {
       //vrati fleg
       this.cancel_animation = false;
 
+      //zaustavi zvuk
+      this.small_win_sound.stop();
+      this.mid_win_sound.stop();
+      this.jackpot_sound.stop();
+
       //nastavi dalje
       console.log("awaited stopping process");
     }
@@ -265,7 +269,7 @@ export class SlotMachine {
     this.game_panel.updateWinAmountText(0);
 
     //odigravanje runde
-    let [r1, r2, r3] = PlayRound();
+    let [r1, r2, r3] = PlayRound(this);
 
     //kraj okretanja 1. rolne
     let promiseSpinCompleted1 = new Promise((resolve, reject) => {
@@ -289,14 +293,14 @@ export class SlotMachine {
     });
 
     //pokretanje slotova
-    this.reel1.spinReel(5);
+    this.reel1.spinReel(r1);
 
     setTimeout(() => {
-      this.reel2.spinReel(5);
+      this.reel2.spinReel(r2);
     }, 50);
 
     setTimeout(() => {
-      this.reel3.spinReel(5);
+      this.reel3.spinReel(r3);
     }, 100);
 
     //čekanje da sve rolne stanu završe...
@@ -324,12 +328,10 @@ export class SlotMachine {
     let hit_list = checkTotalHits(reel_matrix, this.symbol_names);
 
     console.dir(hit_list);
-    console.dir(this.symbol_names);
 
     //lista testova za sve kombinacije
     for (let tests_for_symbol of hit_list){
       let test = tests_for_symbol.test;
-
      
 
       //ako postoji pogodak
@@ -405,6 +407,7 @@ export class SlotMachine {
       };
     });
 
+    this.small_win_sound.sound.currentTime=0;
     this.small_win_sound.play();
 
     //osveži UI
@@ -450,6 +453,7 @@ export class SlotMachine {
       });
 
       //pokrenti zvuk
+      this.mid_win_sound.sound.currentTime=0;
       this.mid_win_sound.play();
 
       //osveži UI
@@ -475,6 +479,7 @@ export class SlotMachine {
       });
 
       //pokrenti zvuk
+      this.jackpot_sound.sound.currentTime=0;
       this.jackpot_sound.play();
 
       //osveži UI
@@ -508,7 +513,7 @@ export class SlotMachine {
         "10-clover",
         "11-dollar",
         "12-triple_bar",
-      ].includes(data.symbol)
+      ].includes(symbol)
     ) {
       let sound_ended = new Promise((resolve) => {
         this.cb_mid_win_sound_ended = () => {
@@ -517,6 +522,7 @@ export class SlotMachine {
       });
 
       //pokrenti zvuk
+      this.mid_win_sound.sound.currentTime=0;
       this.mid_win_sound.play();
 
       //osveži UI
@@ -531,7 +537,7 @@ export class SlotMachine {
 
       //očisti cb
       this.cb_mid_win_sound_ended = null;
-    } else if (data.symbol === "07-seven") {
+    } else if (symbol === "07-seven") {
 
       //promise
       let sound_ended = new Promise((resolve) => {
@@ -541,6 +547,7 @@ export class SlotMachine {
       });
 
       //pokrenti zvuk
+      this.jackpot_sound.sound.currentTime=0;
       this.jackpot_sound.play();
 
       //osveži UI

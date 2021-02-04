@@ -5,7 +5,6 @@ import { SYMBOL_NAMES,CURRENCY_SIGN } from "./setup.js"
 
 
 
-
 async function StartGame() {
 
      //canvas
