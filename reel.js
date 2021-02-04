@@ -22,7 +22,7 @@ export class Reel {
 
     //svaka instanca klase ima svoj stage
     this.stage = new PIXI.Container();
-    this.stage.height=244*3
+    this.stage.height=(symbol_height+1)*3
 
     //niz koji skladišti redosled simbola na rolni
     this.reelArray = reel_array;

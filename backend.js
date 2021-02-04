@@ -7,6 +7,8 @@ export function PlayRound(slot_machine) {
   let r1 = Math.floor(Math.random() * 12);
   let r2 = Math.floor(Math.random() * 12);
   let r3 = Math.floor(Math.random() * 12);
+  let r4 = Math.floor(Math.random() * 12);
+  let r5 = Math.floor(Math.random() * 12);
 
   //1 runda - 2 x 7
   if (slot_machine.counter === 0) {
@@ -52,5 +54,5 @@ export function PlayRound(slot_machine) {
 
   slot_machine.counter++
 
-  return [r1, r2, r3];
+  return [r1, r2, r3,r4,r5];
 }

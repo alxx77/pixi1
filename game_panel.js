@@ -1,23 +1,20 @@
 export class GamePanel {
-  constructor(width, currency_sign, cb_spin_button) {
+  constructor(stage, currency_sign, cb_spin_button) {
     this.currency_sign = currency_sign;
 
     //glavni kontejner
-    this.stage = new PIXI.Container();
-    this.stage.width = width;
-    this.stage.height = 100;
-    this.stage.x = 200;
+    this.stage = stage;
 
     //dugme za pokretanje
     this.spin_button = new PIXI.Sprite(PIXI.utils.TextureCache["cp1_button"]);
-    this.spin_button.scale.set(0.3, 0.3);
-    this.spin_button.x = 550;
+    this.spin_button.scale.set(0.2);
+    this.spin_button.x = 100;
     this.spin_button.interactive = true;
     this.spin_button.buttonMode = true;
 
     //maska
     const mask = new PIXI.Sprite(PIXI.Texture.WHITE);
-    mask.width = 244 * 3;
+    mask.width = 1315;
     mask.height = 100;
     this.stage.addChild(mask);
     this.stage.mask = mask;

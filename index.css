@@ -2,12 +2,9 @@ body{
     margin: 0;
 }
 
-canvas{
+#mycanvas1{
 
 
     margin: auto;
 }
 
-#spin_reels{
-    margin: 5px;
-}

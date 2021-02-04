@@ -63,6 +63,7 @@ export function getTextureNames() {
 }
 
 const BACKGROUND_TEXTURE = "./rsc/background.jpg";
+const FRAME_TEXTURE = "./rsc/transparent_frame.png";
 const CP1_BUTTON = "./rsc/orange-button-hi.png";
 
 //učitavanje tekstura
@@ -75,6 +76,9 @@ export async function loadTextures() {
 
     //slika za pozadinu
     PIXI.Loader.shared.add("background", BACKGROUND_TEXTURE);
+
+    //okvir
+    PIXI.Loader.shared.add("frame", FRAME_TEXTURE);
 
     //dugme
     PIXI.Loader.shared.add("cp1_button", CP1_BUTTON);
@@ -102,6 +106,11 @@ export function initSprites() {
 export function getBackroundSprite() {
   //pozadina
   return new PIXI.Sprite(PIXI.utils.TextureCache["background"]);
+}
+
+export function getFrameSprite() {
+  //pozadina
+  return new PIXI.Sprite(PIXI.utils.TextureCache["frame"]);
 }
 
 //HTML5 sound element
