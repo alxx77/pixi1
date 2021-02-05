@@ -5,11 +5,12 @@ body{
     position: fixed;
     width:100vw;
     max-width: 100%;
+
 }
 
 #mycanvas1{
 
-    
+
     display:block;
 }
 

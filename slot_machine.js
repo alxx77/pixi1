@@ -153,25 +153,28 @@ export class SlotMachine {
 
   view_recalc = (renderer) => {
 
-    let w = document.documentElement.clientWidth/renderer.resolution;
+    let w = document.documentElement.clientWidth;
 
-    let h = document.documentElement.clientHeight/renderer.resolution;
+    let h = document.documentElement.clientHeight;
 
     let r=w/h    
 
     if (w < 768) {
-      //w = 768;
-      //h=w/r
+
     }
 
     if (h < 768) {
-     // h = 768;
 
     }
 
     renderer.resize(w, h);
 
-  
+    //this.stage.width=w
+    //this.stage.height=h
+
+      //pozadina
+      //this.back.width=w
+      //this.back.height=h
 
 
     let mx2 = w - 1315;
@@ -193,8 +196,8 @@ export class SlotMachine {
 
         //panel sa kontrolama
         this.game_panel.stage.x = 0;
-        //this.game_panel.stage.width=w;
-        //this.game_panel.stage.height=w/(1315/100)
+        this.game_panel.stage.width=w;
+        this.game_panel.stage.height=100
       } else {
         //ako postoji pozitivna margina
         this.reel_frame.x = mx2 / 2;
@@ -203,9 +206,12 @@ export class SlotMachine {
 
         //panel sa kontrolama
         this.game_panel.stage.x = mx2 / 2;
-        //this.game_panel.stage.width = 400;
-        //this.game_panel.stage.height = 100
+        this.game_panel.stage.width = 400;
+        this.game_panel.stage.height = 100
       }
+
+      //vertikalno pozicioniranje kontrola
+    this.game_panel.stage.y = this.reel_frame.y + this.reel_frame.height;
     } else {
       //portret
       if (mx2 < 0) {
@@ -217,8 +223,8 @@ export class SlotMachine {
 
         //panel sa kontrolama
         this.game_panel.stage.x = 0;
-        //this.game_panel.stage.width=w;
-        //this.game_panel.stage.height=w/(1315/100)
+        this.game_panel.stage.width=400;
+        this.game_panel.stage.height=100
       } else {
         //ako postoji pozitivna margina
         this.reel_frame.x = mx2 / 2;
@@ -227,13 +233,16 @@ export class SlotMachine {
 
         //panel sa kontrolama
         this.game_panel.stage.x = mx2 / 2;
-        //this.game_panel.stage.width = 400;
-        //this.game_panel.stage.height = 100
+        this.game_panel.stage.width = 400;
+        this.game_panel.stage.height = 100
       }
+
+      //vertikalno pozicioniranje kontrola
+    this.game_panel.stage.y = this.reel_frame.y + this.reel_frame.height+100;
     }
 
-    //vertikalno pozicioniranje kontrola
-    this.game_panel.stage.y = this.reel_frame.y + this.reel_frame.height;
+
+    
   };
 
   //inicijalizacija
@@ -266,6 +275,7 @@ export class SlotMachine {
       height: window.innerHeight,
       resolution: window.devicePixelRatio,
       autoDensity: true,
+      transparent:true
     });
 
     //resize funkcija

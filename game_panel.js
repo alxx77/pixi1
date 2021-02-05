@@ -60,6 +60,12 @@ export class GamePanel {
     this.updateWinAmountText(0);
   }
 
+  refreshText(credit,bet,win){
+    this.updateCreditAmountText(credit)
+    this.updateBetAmountText(bet)
+    this.updateWinAmountText(win)
+  }
+
   //ispis kredita
   updateCreditAmountText(amount) {
     this.credit_amount_text_object.text=`Credit: ${amount} ${this.currency_sign}`;
