@@ -278,11 +278,11 @@ export class SlotMachine {
 
    
     //pozadina
-    this.back = new PIXI.Container();
+    //this.back = new PIXI.Container();
     //this.back.width=renderer.width //scale.x = 1920 / viewWidth;
     //this.back.height=renderer.height //scale.y = this.back.scale.x;
-    this.back.addChild(getBackroundSprite());
-    this.stage.addChild(this.back);
+    //this.back.addChild(getBackroundSprite());
+    //this.stage.addChild(this.back);
 
     //stage za okvir rolni
     this.reel_frame = new PIXI.Container();
