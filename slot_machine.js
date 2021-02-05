@@ -152,51 +152,26 @@ export class SlotMachine {
   }
 
   view_recalc = (renderer) => {
-    const gameWidth = 1335;
-    const gameHeight = 875;
 
-    const gameOrientation = gameWidth > gameHeight ? "landscape" : "portrait";
-    const gameLandscapeScreenRatio = gameWidth / gameHeight;
-    const gamePortraitScreenRatio = gameHeight / gameWidth;
+    let w = document.documentElement.clientWidth;
 
-    const isScreenPortrait = window.innerHeight >= window.innerWidth;
-    const isScreenLandscape = !isScreenPortrait;
-    const screenRatio = window.innerWidth / window.innerHeight;
+    let h = document.documentElement.clientHeight;
 
-    let newWidth;
-    let newHeight;
-
-    if (
-      (gameOrientation === "landscape" && isScreenLandscape) ||
-      (gameOrientation === "portrait" && isScreenPortrait)
-    ) {
-      if (screenRatio < gameLandscapeScreenRatio) {
-        newWidth = gameWidth;
-        newHeight = Math.round(gameWidth / screenRatio);
-      } else {
-        newWidth = Math.round(gameHeight * screenRatio);
-        newHeight = gameHeight;
-      }
-    } else {
-      if (screenRatio < gamePortraitScreenRatio) {
-        newWidth = gameHeight;
-        newHeight = Math.round(gameHeight / screenRatio);
-      } else {
-        newWidth = Math.round(gameWidth * screenRatio);
-        newHeight = gameWidth;
-      }
+    if (w < 768) {
+      w = 768;
     }
 
-    renderer.resize(newWidth, newHeight);
-    //console.log(newWidth,newHeight)
+    if (h < 768) {
+      h = 768;
+    }
 
-    let w = renderer.width;
-    let h = renderer.height;
+    renderer.resize(w, h);
+
 
     let mx2 = w - 1315;
     let my2 = h - 775;
 
-    //console.log("g " + this.game_panel.stage.width)
+    console.log(w,h,renderer.resolution)
 
     if (w > h) {
       //landscape
@@ -206,6 +181,7 @@ export class SlotMachine {
       if (mx2 < 0) {
         //glavni panel
         this.reel_frame.x = 0;
+        this.reel_frame.y = 20;
         this.reel_frame.width = w;
         this.reel_frame.height = w / (1315 / 775);
 
@@ -226,6 +202,28 @@ export class SlotMachine {
       }
     } else {
       //portret
+      if (mx2 < 0) {
+        //glavni panel
+        this.reel_frame.x = 0;
+        this.reel_frame.y = 100;
+        this.reel_frame.width = w;
+        this.reel_frame.height = w / (1315 / 775);
+
+        //panel sa kontrolama
+        this.game_panel.stage.x = 0;
+        //this.game_panel.stage.width=w;
+        //this.game_panel.stage.height=w/(1315/100)
+      } else {
+        //ako postoji pozitivna margina
+        this.reel_frame.x = mx2 / 2;
+        this.reel_frame.width = 1315;
+        this.reel_frame.height = 775;
+
+        //panel sa kontrolama
+        this.game_panel.stage.x = mx2 / 2;
+        //this.game_panel.stage.width = 400;
+        //this.game_panel.stage.height = 100
+      }
     }
 
     //vertikalno pozicioniranje kontrola
@@ -257,6 +255,7 @@ export class SlotMachine {
     //renderer
     let renderer = new PIXI.Renderer({
       view: this.canvas,
+      autoResize: true,
       width: document.documentElement.clientWidth,
       height: document.documentElement.clientHeight,
       resolution: window.devicePixelRatio,
@@ -265,19 +264,6 @@ export class SlotMachine {
 
     //resize funkcija
     const resize = () => {
-      let w = document.documentElement.clientWidth;
-
-      let h = document.documentElement.clientHeight;
-
-      if (w < 768) {
-        w = 768;
-      }
-
-      if (h < 768) {
-        h = 768;
-      }
-
-      renderer.resize(w, h);
       this.view_recalc(renderer);
     };
 
@@ -285,11 +271,12 @@ export class SlotMachine {
     window.addEventListener("resize", resize);
 
     let viewWidth = renderer.width / renderer.resolution;
+    console.log(renderer.width,renderer.height,renderer.resolution,viewWidth)
 
     //pozadina
     this.back = new PIXI.Container();
-    this.back.scale.x = 1920 / viewWidth;
-    this.back.scale.y = this.back.scale.x;
+    this.back.width=renderer.width //scale.x = 1920 / viewWidth;
+    this.back.height=renderer.height //scale.y = this.back.scale.x;
     this.back.addChild(getBackroundSprite());
     this.stage.addChild(this.back);
 
@@ -321,7 +308,7 @@ export class SlotMachine {
     );
     this.stage.addChild(this.game_panel.stage);
 
-    console.log(game_panel_stage.width);
+    //console.log(game_panel_stage.width);
 
     //iznos uloga
     this.bet_amount = 10;

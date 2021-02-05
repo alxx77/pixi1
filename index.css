@@ -1,10 +1,12 @@
 body{
-    margin: 0;
+    margin:0;
+    padding:0;
+    overflow:hidden;
 }
 
 #mycanvas1{
 
 
-    margin: auto;
+    display:block;
 }
 

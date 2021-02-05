@@ -59,9 +59,9 @@ export async function winSymbolsFlicker(slot_machine, hit_test_element) {
           "12-triple_bar",
         ].includes(symbol)
       ) {
-        cycles = 20;
+        cycles = 18;
       } else if (symbol === "07-seven") {
-        cycles = 26;
+        cycles = 22;
       }
       break;
 
