@@ -160,12 +160,12 @@ export class SlotMachine {
     let r=w/h    
 
     if (w < 768) {
-      w = 768;
+      //w = 768;
       //h=w/r
     }
 
     if (h < 768) {
-      h = 768;
+     // h = 768;
 
     }
 
