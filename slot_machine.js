@@ -248,7 +248,7 @@ export class SlotMachine {
       width: document.documentElement.clientWidth,
       height: document.documentElement.clientHeight,
       resolution: window.devicePixelRatio,
-      //autoDensity: true,
+      autoDensity: true,
     });
 
     //resize funkcija
