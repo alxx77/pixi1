@@ -20,17 +20,13 @@ export class GamePanel {
     this.stage.mask = mask;
 
     //klik hendler
-    this.spin_button.on("click", (event) => {
+    this.spin_button.on("pointerdown", (event) => {
       if (cb_spin_button) {
         if (cb_spin_button instanceof Function) cb_spin_button();
       }
     });
 
-    this.spin_button.on("tap", (event) => {
-      if (cb_spin_button) {
-        if (cb_spin_button instanceof Function) cb_spin_button();
-      }
-    });
+
 
     //text objekti
     let style = new PIXI.TextStyle({

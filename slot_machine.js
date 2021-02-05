@@ -44,8 +44,6 @@ export class SlotMachine {
     this.reel4 = null;
     this.reel5 = null;
 
-   
-
     //širina rolne u px
     this.reel_width = 0;
 
@@ -58,7 +56,7 @@ export class SlotMachine {
     //širina sprajta simbola
     this.symbol_height = 0;
 
-       //nov ticker objekt
+    //nov ticker objekt
     this.ticker = new PIXI.Ticker();
 
     //lista imena simbola
@@ -153,13 +151,50 @@ export class SlotMachine {
     }
   }
 
+  view_recalc = (renderer) => {
+    const gameWidth = 1335;
+    const gameHeight = 875;
 
-  view_recalc=(renderer)=>{
-    let w=renderer.width;
-    let h=renderer.height;
+    const gameOrientation = gameWidth > gameHeight ? "landscape" : "portrait";
+    const gameLandscapeScreenRatio = gameWidth / gameHeight;
+    const gamePortraitScreenRatio = gameHeight / gameWidth;
 
-    let mx2=w-1315;
-    let my2=h-775
+    const isScreenPortrait = window.innerHeight >= window.innerWidth;
+    const isScreenLandscape = !isScreenPortrait;
+    const screenRatio = window.innerWidth / window.innerHeight;
+
+    let newWidth;
+    let newHeight;
+
+    if (
+      (gameOrientation === "landscape" && isScreenLandscape) ||
+      (gameOrientation === "portrait" && isScreenPortrait)
+    ) {
+      if (screenRatio < gameLandscapeScreenRatio) {
+        newWidth = gameWidth;
+        newHeight = Math.round(gameWidth / screenRatio);
+      } else {
+        newWidth = Math.round(gameHeight * screenRatio);
+        newHeight = gameHeight;
+      }
+    } else {
+      if (screenRatio < gamePortraitScreenRatio) {
+        newWidth = gameHeight;
+        newHeight = Math.round(gameHeight / screenRatio);
+      } else {
+        newWidth = Math.round(gameWidth * screenRatio);
+        newHeight = gameWidth;
+      }
+    }
+
+    renderer.resize(newWidth, newHeight);
+    //console.log(newWidth,newHeight)
+
+    let w = renderer.width;
+    let h = renderer.height;
+
+    let mx2 = w - 1315;
+    let my2 = h - 775;
 
     //console.log("g " + this.game_panel.stage.width)
 
@@ -168,57 +203,34 @@ export class SlotMachine {
 
       //ako je ukupna x margina negativna
       //postaviti x ofset na 0
-      if(mx2<0){
-
+      if (mx2 < 0) {
         //glavni panel
-        this.reel_frame.x=0;
-        this.reel_frame.width=w;
-        this.reel_frame.height=w/(1315/775)
+        this.reel_frame.x = 0;
+        this.reel_frame.width = w;
+        this.reel_frame.height = w / (1315 / 775);
 
         //panel sa kontrolama
-        this.game_panel.stage.x=0
+        this.game_panel.stage.x = 0;
         //this.game_panel.stage.width=w;
         //this.game_panel.stage.height=w/(1315/100)
-
       } else {
         //ako postoji pozitivna margina
         this.reel_frame.x = mx2 / 2;
         this.reel_frame.width = 1315;
         this.reel_frame.height = 775;
 
-
-
         //panel sa kontrolama
         this.game_panel.stage.x = mx2 / 2;
         //this.game_panel.stage.width = 400;
         //this.game_panel.stage.height = 100
-        
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
     } else {
       //portret
-
-
-
     }
 
     //vertikalno pozicioniranje kontrola
     this.game_panel.stage.y = this.reel_frame.y + this.reel_frame.height;
-
-
-  }
+  };
 
   //inicijalizacija
   async initMachine() {
@@ -300,18 +312,22 @@ export class SlotMachine {
 
     //stage za kontrole
     let game_panel_stage = new PIXI.Container();
-    game_panel_stage.width=1315
-    game_panel_stage.height=100
-    this.game_panel = new GamePanel(game_panel_stage, this.currency_sign, this.spinReels);
+    game_panel_stage.width = 1315;
+    game_panel_stage.height = 100;
+    this.game_panel = new GamePanel(
+      game_panel_stage,
+      this.currency_sign,
+      this.spinReels
+    );
     this.stage.addChild(this.game_panel.stage);
-    
-    console.log(game_panel_stage.width)
+
+    console.log(game_panel_stage.width);
 
     //iznos uloga
     this.bet_amount = 10;
     this.game_panel.updateBetAmountText(this.bet_amount);
 
-    this.view_recalc(renderer)
+    this.view_recalc(renderer);
 
     //instanciranje instanci reel objekta
     this.reel1 = new Reel(1, this.reel_stage, 244, 244, map1, symbol_slot1, 0);
@@ -383,8 +399,7 @@ export class SlotMachine {
       this.reel2.isSpinning ||
       this.reel3.isSpinning ||
       this.reel4.isSpinning ||
-      this.reel5.isSpinning 
-
+      this.reel5.isSpinning
     ) {
       console.log("already spinning");
       return;
@@ -434,7 +449,7 @@ export class SlotMachine {
     this.game_panel.updateWinAmountText(0);
 
     //odigravanje runde
-    let [r1, r2, r3,r4,r5] = PlayRound(this);
+    let [r1, r2, r3, r4, r5] = PlayRound(this);
 
     //kraj okretanja 1. rolne
     let promiseSpinCompleted1 = new Promise((resolve, reject) => {
@@ -490,7 +505,6 @@ export class SlotMachine {
       this.reel5.spinReel(r5);
     }, 200);
 
-    
     //čekanje da sve rolne stanu završe...
     await Promise.all([
       promiseSpinCompleted1,
