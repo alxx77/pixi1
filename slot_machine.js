@@ -153,9 +153,9 @@ export class SlotMachine {
 
   view_recalc = (renderer) => {
 
-    let w = document.documentElement.clientWidth;
+    let w = document.documentElement.clientWidth/renderer.resolution;
 
-    let h = document.documentElement.clientHeight;
+    let h = document.documentElement.clientHeight/renderer.resolution;
 
     let r=w/h    
 
@@ -179,7 +179,7 @@ export class SlotMachine {
     let mx2 = w - 1315;
     let my2 = h - 775;
 
-    console.log(renderer.width,renderer.height)
+    console.log(renderer.width,renderer.height,renderer.resolution)
 
     if (w > h) {
       //landscape
@@ -266,7 +266,7 @@ export class SlotMachine {
       //autoResize: true,
       width: window.innerWidth,
       height: window.innerHeight,
-      resolution: 1,//window.devicePixelRatio,
+      resolution: window.devicePixelRatio,
       autoDensity: true,
     });
 
