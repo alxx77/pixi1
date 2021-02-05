@@ -157,30 +157,13 @@ export class SlotMachine {
 
     let h = document.documentElement.clientHeight;
 
-    let r=w/h    
-
-    if (w < 768) {
-
-    }
-
-    if (h < 768) {
-
-    }
 
     renderer.resize(w, h);
 
-    //this.stage.width=w
-    //this.stage.height=h
-
-      //pozadina
-      //this.back.width=w
-      //this.back.height=h
-
-
     let mx2 = w - 1315;
-    let my2 = h - 775;
+    let my2 = h - 925;
 
-    console.log(renderer.width,renderer.height,renderer.resolution)
+    console.log("resize: ", renderer.width,renderer.height)
 
     if (w > h) {
       //landscape
@@ -190,28 +173,38 @@ export class SlotMachine {
       if (mx2 < 0) {
         //glavni panel
         this.reel_frame.x = 0;
-        this.reel_frame.y = 20;
         this.reel_frame.width = w;
-        this.reel_frame.height = w / (1315 / 775);
+        this.reel_frame.height = w / (1315 / 925);
 
-        //panel sa kontrolama
-        this.game_panel.stage.x = 0;
-        this.game_panel.stage.width=w;
-        this.game_panel.stage.height=100
       } else {
         //ako postoji pozitivna margina
         this.reel_frame.x = mx2 / 2;
         this.reel_frame.width = 1315;
-        this.reel_frame.height = 775;
+        this.reel_frame.height = 925;
 
-        //panel sa kontrolama
-        this.game_panel.stage.x = mx2 / 2;
-        this.game_panel.stage.width = 400;
-        this.game_panel.stage.height = 100
       }
 
-      //vertikalno pozicioniranje kontrola
-    this.game_panel.stage.y = this.reel_frame.y + this.reel_frame.height;
+      //y osa
+      //ako je ukupna y margina negativna
+      //postaviti y ofset na 0
+      if (my2 < 0) {
+        //glavni panel
+        this.reel_frame.y = 0;
+        this.reel_frame.height = h-10;
+        this.reel_frame.width = (h-10)*(1315 / 925)
+        
+
+      } else {
+        //ako postoji pozitivna margina
+        this.reel_frame.y = my2 / 2;
+        this.reel_frame.width = 1315;
+        this.reel_frame.height = 925;
+
+      }
+
+
+
+
     } else {
       //portret
       if (mx2 < 0) {
@@ -219,26 +212,17 @@ export class SlotMachine {
         this.reel_frame.x = 0;
         this.reel_frame.y = 100;
         this.reel_frame.width = w;
-        this.reel_frame.height = w / (1315 / 775);
+        this.reel_frame.height = w / (1315 / 925);
 
-        //panel sa kontrolama
-        this.game_panel.stage.x = 0;
-        this.game_panel.stage.width=400;
-        this.game_panel.stage.height=100
       } else {
         //ako postoji pozitivna margina
         this.reel_frame.x = mx2 / 2;
         this.reel_frame.width = 1315;
-        this.reel_frame.height = 775;
+        this.reel_frame.height = 925;
 
-        //panel sa kontrolama
-        this.game_panel.stage.x = mx2 / 2;
-        this.game_panel.stage.width = 400;
-        this.game_panel.stage.height = 100
       }
 
-      //vertikalno pozicioniranje kontrola
-    this.game_panel.stage.y = this.reel_frame.y + this.reel_frame.height+100;
+
     }
 
 
@@ -286,17 +270,13 @@ export class SlotMachine {
     //resize event
     window.addEventListener("resize", resize);
 
-   
-    //pozadina
-    //this.back = new PIXI.Container();
-    //this.back.width=renderer.width //scale.x = 1920 / viewWidth;
-    //this.back.height=renderer.height //scale.y = this.back.scale.x;
-    //this.back.addChild(getBackroundSprite());
-    //this.stage.addChild(this.back);
-
+ 
     //stage za okvir rolni
     this.reel_frame = new PIXI.Container();
-    this.reel_frame.addChild(getFrameSprite());
+    this.reel_frame.addChild(getFrameSprite()); //1315x775
+
+    //dodatak mesta za kontrole
+    this.reel_frame.height=775+150
     this.stage.addChild(this.reel_frame);
 
     //stage za rolne
@@ -311,18 +291,13 @@ export class SlotMachine {
     this.reel_stage.y = 20;
     this.reel_frame.addChild(this.reel_stage);
 
-    //stage za kontrole
-    let game_panel_stage = new PIXI.Container();
-    game_panel_stage.width = 1315;
-    game_panel_stage.height = 100;
+    //game panel
     this.game_panel = new GamePanel(
-      game_panel_stage,
+      this.reel_frame,
       this.currency_sign,
       this.spinReels
     );
-    this.stage.addChild(this.game_panel.stage);
 
-    //console.log(game_panel_stage.width);
 
     //iznos uloga
     this.bet_amount = 10;

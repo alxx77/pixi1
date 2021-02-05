@@ -7,17 +7,13 @@ export class GamePanel {
 
     //dugme za pokretanje
     this.spin_button = new PIXI.Sprite(PIXI.utils.TextureCache["cp1_button"]);
-    this.spin_button.scale.set(0.3);
-    this.spin_button.x = 500;
+    this.spin_button.scale.set(0.4);
+    this.spin_button.x = 1030;
+    this.spin_button.y=780
     this.spin_button.interactive = true;
     this.spin_button.buttonMode = true;
 
-    //maska
-    const mask = new PIXI.Sprite(PIXI.Texture.WHITE);
-    mask.width = 1315;
-    mask.height = 100;
-    this.stage.addChild(mask);
-    this.stage.mask = mask;
+ 
 
     //klik hendler
     this.spin_button.on("pointerdown", (event) => {
@@ -27,7 +23,6 @@ export class GamePanel {
     });
 
 
-
     //text objekti
     let style = new PIXI.TextStyle({
         fontFamily: "Verdana, Geneva, sans-serif",
@@ -35,20 +30,22 @@ export class GamePanel {
 
       //kredit
     this.credit_amount_text_object=new PIXI.Text(`Credit: 0 ${this.currency_sign}`, style);
-    this.credit_amount_text_object.x=250
+    this.credit_amount_text_object.x=780
+    this.credit_amount_text_object.y=800
     this.stage.addChild(this.credit_amount_text_object);
 
     //ulog
     this.bet_amount_text_object=new PIXI.Text(`Bet: 0 ${this.currency_sign}`, style);
-    this.bet_amount_text_object.x=280
-    this.bet_amount_text_object.y=30
+    this.bet_amount_text_object.x=780
+    this.bet_amount_text_object.y=840
 
     this.stage.addChild(this.bet_amount_text_object);
 
     //dobitak
     this.win_amount_text_object=new PIXI.Text(`Win: 0 ${this.currency_sign}`, style);
-    this.win_amount_text_object.x=280
-    this.win_amount_text_object.y=60
+    this.win_amount_text_object.x=600
+    this.win_amount_text_object.y=820
+    
 
     this.stage.addChild(this.win_amount_text_object);
 
