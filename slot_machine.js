@@ -171,9 +171,7 @@ export class SlotMachine {
 
     renderer.resize(w, h);
 
-    //pozadina
-    this.back.width=w
-    this.back.height=h
+  
 
 
     let mx2 = w - 1315;
@@ -281,8 +279,8 @@ export class SlotMachine {
    
     //pozadina
     this.back = new PIXI.Container();
-    this.back.width=renderer.width //scale.x = 1920 / viewWidth;
-    this.back.height=renderer.height //scale.y = this.back.scale.x;
+    //this.back.width=renderer.width //scale.x = 1920 / viewWidth;
+    //this.back.height=renderer.height //scale.y = this.back.scale.x;
     this.back.addChild(getBackroundSprite());
     this.stage.addChild(this.back);
 
