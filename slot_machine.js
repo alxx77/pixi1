@@ -153,9 +153,9 @@ export class SlotMachine {
 
   view_recalc = (renderer) => {
 
-    let w = document.documentElement.clientWidth;
+    var w = window.innerWidth;
 
-    let h = document.documentElement.clientHeight;
+var h = window.innerHeight;
 
     if (w < 768) {
       w = 768;
@@ -166,6 +166,10 @@ export class SlotMachine {
     }
 
     renderer.resize(w, h);
+
+    //pozadina
+    this.back.width=renderer.width
+    this.back.height=renderer.height
 
 
     let mx2 = w - 1315;
@@ -255,10 +259,10 @@ export class SlotMachine {
     //renderer
     let renderer = new PIXI.Renderer({
       view: this.canvas,
-      autoResize: true,
-      width: document.documentElement.clientWidth,
-      height: document.documentElement.clientHeight,
-      resolution: window.devicePixelRatio,
+      //autoResize: true,
+      width: window.innerWidth,
+      height: window.innerHeight,
+      resolution: 1,//window.devicePixelRatio,
       autoDensity: true,
     });
 
@@ -270,9 +274,7 @@ export class SlotMachine {
     //resize event
     window.addEventListener("resize", resize);
 
-    let viewWidth = renderer.width / renderer.resolution;
-    console.log(renderer.width,renderer.height,renderer.resolution,viewWidth)
-
+   
     //pozadina
     this.back = new PIXI.Container();
     this.back.width=renderer.width //scale.x = 1920 / viewWidth;
