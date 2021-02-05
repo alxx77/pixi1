@@ -3,11 +3,13 @@ body{
     padding:0;
     overflow:hidden;
     position: fixed;
+    width:100vw;
+    max-width: 100%;
 }
 
 #mycanvas1{
 
-
+    
     display:block;
 }
 
