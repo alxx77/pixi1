@@ -7,8 +7,8 @@ export class GamePanel {
 
     //dugme za pokretanje
     this.spin_button = new PIXI.Sprite(PIXI.utils.TextureCache["cp1_button"]);
-    this.spin_button.scale.set(0.2);
-    this.spin_button.x = 100;
+    this.spin_button.scale.set(0.3);
+    this.spin_button.x = 500;
     this.spin_button.interactive = true;
     this.spin_button.buttonMode = true;
 
@@ -21,6 +21,12 @@ export class GamePanel {
 
     //klik hendler
     this.spin_button.on("click", (event) => {
+      if (cb_spin_button) {
+        if (cb_spin_button instanceof Function) cb_spin_button();
+      }
+    });
+
+    this.spin_button.on("tap", (event) => {
       if (cb_spin_button) {
         if (cb_spin_button instanceof Function) cb_spin_button();
       }
