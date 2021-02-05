@@ -153,29 +153,33 @@ export class SlotMachine {
 
   view_recalc = (renderer) => {
 
-    var w = window.innerWidth;
+    let w = document.documentElement.clientWidth;
 
-var h = window.innerHeight;
+    let h = document.documentElement.clientHeight;
+
+    let r=w/h    
 
     if (w < 768) {
       w = 768;
+      //h=w/r
     }
 
     if (h < 768) {
       h = 768;
+
     }
 
     renderer.resize(w, h);
 
     //pozadina
-    this.back.width=renderer.width
-    this.back.height=renderer.height
+    this.back.width=w
+    this.back.height=h
 
 
     let mx2 = w - 1315;
     let my2 = h - 775;
 
-    console.log(w,h,renderer.resolution)
+    console.log(renderer.width,renderer.height)
 
     if (w > h) {
       //landscape
