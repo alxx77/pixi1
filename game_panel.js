@@ -1,9 +1,14 @@
 export class GamePanel {
-  constructor(stage, currency_sign, cb_spin,cb_max_bet,cb_bet_up,cb_bet_down) {
-    this.currency_sign = currency_sign;
+  constructor(slot_machine){ //stage, currency_sign, cb_spin,cb_max_bet,cb_bet_up,cb_bet_down) {
+    this.currency_sign = slot_machine.currency_sign
 
-    //glavni kontejner
-    this.stage = stage;
+    //stage
+    let stage = slot_machine.reel_frame;
+    
+    let cb_spin=slot_machine.spinReels
+    let cb_max_bet=slot_machine.maxBet
+    let cb_bet_up=slot_machine.betUp
+    let cb_bet_down=slot_machine.betDown
 
     //bela pozadina
     const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
@@ -49,7 +54,7 @@ export class GamePanel {
     //klik hendler za spin dugme
     this.spin_button.on("pointerdown", (event) => {
       if (cb_spin) {
-        if (cb_spin instanceof Function) cb_spin();
+        if (cb_spin instanceof Function) cb_spin(slot_machine.bet_amount);
       }
     });
 
@@ -84,14 +89,14 @@ export class GamePanel {
     this.credit_amount_text_object=new PIXI.Text(`Credit: 0 ${this.currency_sign}`, style);
     this.credit_amount_text_object.x=740
     this.credit_amount_text_object.y=840
-    this.stage.addChild(this.credit_amount_text_object);
+    stage.addChild(this.credit_amount_text_object);
 
     //ulog
     this.bet_amount_text_object=new PIXI.Text(`Bet: 0 ${this.currency_sign}`, style);
     this.bet_amount_text_object.x=420
     this.bet_amount_text_object.y=785
 
-    this.stage.addChild(this.bet_amount_text_object);
+    stage.addChild(this.bet_amount_text_object);
 
     //dobitak
     this.win_amount_text_object=new PIXI.Text(`Win: 0 ${this.currency_sign}`, style);
@@ -99,14 +104,14 @@ export class GamePanel {
     this.win_amount_text_object.y=785
     
 
-    this.stage.addChild(this.win_amount_text_object);
+    stage.addChild(this.win_amount_text_object);
 
 
     //dodavanje u stejdž
-    this.stage.addChild(this.spin_button);
-    this.stage.addChild(this.max_bet_button);
-    this.stage.addChild(this.bet_up_button);
-    this.stage.addChild(this.bet_down_button);
+    stage.addChild(this.spin_button);
+    stage.addChild(this.max_bet_button);
+    stage.addChild(this.bet_up_button);
+    stage.addChild(this.bet_down_button);
 
     //tekst
     this.updateCreditAmountText(0);
