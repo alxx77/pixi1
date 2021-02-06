@@ -658,19 +658,20 @@ export class SlotMachine {
 
     let h = document.documentElement.clientHeight;
 
+    //promeni dimenzije renderera
     renderer.resize(w, h);
 
-    let mx2 = w - 1315;
-    let my2 = h - 925;
-
+    //odnos š/v za stage
     let game_ratio=1315/925
+
+    //-//- za renderer
     let renderer_ratio=w/h
 
-    console.log("resize: ", renderer.width, renderer.height,mx2,my2);
+    console.log("resize: ", renderer.width, renderer.height);
 
+    //nove dimenzije stage-a
     let game_height=0;
     let game_width=0;
-
 
     //ako je odnos Š/v veći kod renderera
     //znači da je on širi; tj. da je visina ograničavajući faktor
@@ -684,7 +685,7 @@ export class SlotMachine {
 
     }else{
     //ako je odnos Š/v manji kod renderera
-    //znači da je on ; tj. da je širina ograničavajući faktor
+    //znači da je on uži tj. da je širina ograničavajući faktor
 
       //uzima se prvo širina renderera a max 1315
       game_width=Math.min(w,1315)
@@ -698,35 +699,17 @@ export class SlotMachine {
     this.reel_frame.height=game_height;
 
     //margine po širini
-    if (w < 1315) {
-      //glavni panel
-      this.reel_frame.x = 0;
+    this.reel_frame.x=(w-game_width)/2
 
-    } else {
-      //ako postoji pozitivna margina
-      //podeli razliku po x osi
-      this.reel_frame.x = (w-1315) / 2;
-
+    if(w>h){
+      this.reel_frame.y=(h-game_height)/2
+    }else{
+      this.reel_frame.y=Math.max(h*0.34-(game_height/2),0)
     }
 
-    //margine po visini
-    if (w > h) {
-      //landscape
+    
 
-      //ako je y margina negativna
-      if(h<925){
-        //y ofset od 10 px
-        this.reel_frame.y=10;
-      }else{
-        //inače podeli razliku
-        this.reel_frame.y=(h-925)/2
-      }
 
-    } else {
-    //portret
-        this.reel_frame.y=Math.max((h*0.34-(game_height/2)),10)
-
-    }
   };
 
   //instance reel objekata
