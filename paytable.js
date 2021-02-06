@@ -1,4 +1,3 @@
-
 import {
   SYMBOL_01_LEMON,
   SYMBOL_02_ORANGE,
@@ -13,80 +12,6 @@ import {
   SYMBOL_11_DOLLAR,
   SYMBOL_12_TRIPLE_BAR,
 } from "./setup.js";
-
-//lista testova
-function getHitTestList() {
-  let hit2Top = {
-    id: "hit2Top",
-    tests: [
-      [0, 0, 1, 0, 0, 1, 0, 0, 0],
-      [0, 0, 1, 0, 0, 0, 0, 0, 1],
-      [0, 0, 0, 0, 0, 1, 0, 0, 1],
-    ],
-    mask: [0, 0, 1, 0, 0, 1, 0, 0, 1],
-  };
-
-  let hit2Mid = {
-    id: "hit2Mid",
-    tests: [
-      [0, 1, 0, 0, 1, 0, 0, 0, 0],
-      [0, 1, 0, 0, 0, 0, 0, 1, 0],
-      [0, 0, 0, 0, 1, 0, 0, 1, 0],
-    ],
-    mask: [0, 1, 0, 0, 1, 0, 0, 1, 0],
-  };
-
-  let hit2Low = {
-    id: "hit2Low",
-    tests: [
-      [1, 0, 0, 1, 0, 0, 0, 0, 0],
-      [1, 0, 0, 0, 0, 0, 1, 0, 0],
-      [0, 0, 0, 1, 0, 0, 1, 0, 0],
-    ],
-    mask: [1, 0, 0, 1, 0, 0, 1, 0, 0],
-  };
-
-  let hit3Top = {
-    id: "hit3Top",
-    tests: [[0, 0, 1, 0, 0, 1, 0, 0, 1]],
-    mask: [0, 0, 1, 0, 0, 1, 0, 0, 1],
-  };
-
-  let hit3Mid = {
-    id: "hit3Mid",
-    tests: [[0, 1, 0, 0, 1, 0, 0, 1, 0]],
-    mask: [0, 1, 0, 0, 1, 0, 0, 1, 0],
-  };
-
-  let hit3Low = {
-    id: "hit3Low",
-    tests: [[1, 0, 0, 1, 0, 0, 1, 0, 0]],
-    mask: [1, 0, 0, 1, 0, 0, 1, 0, 0],
-  };
-
-  let hit0Diag = {
-    id: "hit0Diag",
-    tests: [[1, 0, 0, 0, 1, 0, 0, 0, 1]],
-    mask: [1, 0, 0, 0, 1, 0, 0, 0, 1],
-  };
-
-  let hit1Diag = {
-    id: "hit1Diag",
-    tests: [[0, 0, 1, 0, 1, 0, 1, 0, 0]],
-    mask: [0, 0, 1, 0, 1, 0, 1, 0, 0],
-  };
-
-  return [
-    hit2Top,
-    hit2Mid,
-    hit2Low,
-    hit3Top,
-    hit3Mid,
-    hit3Low,
-    hit0Diag,
-    hit1Diag,
-  ];
-}
 
 function getSymbolValueMap() {
   let x = new Map();
@@ -104,7 +29,7 @@ function getSymbolValueMap() {
   x.set(SYMBOL_11_DOLLAR, 3);
   x.set(SYMBOL_12_TRIPLE_BAR, 2);
 
-  return x
+  return x;
 }
 
 function getCombinationAndPositionValueMap() {
@@ -113,105 +38,123 @@ function getCombinationAndPositionValueMap() {
   x.set("hit2Top", 1);
   x.set("hit2Mid", 2);
   x.set("hit2Low", 1);
-  x.set("hit3Top", 10);
-  x.set("hit3Mid", 100);
-  x.set("hit3Low", 10);
-  x.set("hit0Diag", 20);
-  x.set("hit1Diag", 20);
+  x.set("hit3Top", 5);
+  x.set("hit3Mid", 10);
+  x.set("hit3Low", 5);
+  x.set("hit4Top", 20);
+  x.set("hit4Mid", 40);
+  x.set("hit4Low", 20);
+  x.set("hit5Top", 50);
+  x.set("hit5Mid", 100);
+  x.set("hit5Low", 50);
 
   return x;
 }
 
-function GetPayout(symbol,hitCombination){
+function GetPayout(symbol, hitCombination) {
+  let symbol_value = getSymbolValueMap().get(symbol);
 
+  let position_factor = getCombinationAndPositionValueMap().get(hitCombination);
 
-  let symbol_value=getSymbolValueMap().get(symbol)
-
-  let position_factor=getCombinationAndPositionValueMap().get(hitCombination)
-
-  return symbol_value*position_factor;
-
+  return symbol_value * position_factor;
 }
 
+//transponovanje 2D matrice
+function transpose(array) {
+  return array.reduce(
+    (prev, next) => next.map((item, i) => (prev[i] || []).concat(next[i])),
+    []
+  );
+}
 
+//suma
+const sum = (xs) => xs.reduce((x, y) => x + y, 0);
+
+//provere
+const hit2TopCheck = { id: "hit2Top", mask_row: 2, sum_row: 2 };
+const hit2MidCheck = { id: "hit2Mid", mask_row: 1, sum_row: 2 };
+const hit2LowCheck = { id: "hit2Low", mask_row: 0, sum_row: 2 };
+
+const hit3TopCheck = { id: "hit3Top", mask_row: 2, sum_row: 3 };
+const hit3MidCheck = { id: "hit3Mid", mask_row: 1, sum_row: 3 };
+const hit3LowCheck = { id: "hit3Low", mask_row: 0, sum_row: 3 };
+
+const hit4TopCheck = { id: "hit4Top", mask_row: 2, sum_row: 4 };
+const hit4MidCheck = { id: "hit4Mid", mask_row: 1, sum_row: 4 };
+const hit4LowCheck = { id: "hit4Low", mask_row: 0, sum_row: 4 };
+
+const hit5TopCheck = { id: "hit5Top", mask_row: 2, sum_row: 5 };
+const hit5MidCheck = { id: "hit5Mid", mask_row: 1, sum_row: 5 };
+const hit5LowCheck = { id: "hit5Low", mask_row: 0, sum_row: 5 };
+
+const test_list_new = [
+  hit2TopCheck,
+  hit2MidCheck,
+  hit2LowCheck,
+  hit3TopCheck,
+  hit3MidCheck,
+  hit3LowCheck,
+  hit4TopCheck,
+  hit4MidCheck,
+  hit4LowCheck,
+  hit5TopCheck,
+  hit5MidCheck,
+  hit5LowCheck,
+];
 
 //provera pogodaka
+function testMatrix(reel_matrix, check_obj, symbol) {
+  //prolazak kroz matricu rolni
+  let hit_matrix2D = reel_matrix.reduce((acc, reel_el) => {
+    //maskiraj dati red i proveri poklapanje simbola
+    acc.push(
+      reel_el.map((s, idx) =>
+        idx === check_obj.mask_row ? (s === symbol ? 1 : 0) : 0
+      )
+    );
+
+    return acc;
+  }, []);
+
+  //da bi se proverile sume po redovima
+  //najlakše je transponovati matricu
+  let transposed2D_matrix = transpose(hit_matrix2D);
+
+  //test je uspešan ako je suma pogodaka jednaka polju sum row
+  let hit = sum(transposed2D_matrix[check_obj.mask_row]) === check_obj.sum_row;
+
+  return {
+    id: check_obj.id,
+    symbol: symbol,
+    hit: hit,
+    hit_map: hit_matrix2D.flat(),
+    payout: GetPayout(symbol, check_obj.id),
+  };
+}
+
+//prođi kroz listu svih testova za 1 simbol
+function checkAllTests(reel_matrix, symbol, test_list) {
+
+  return test_list.reduce((acc, check_obj) => {
+    let result = testMatrix(reel_matrix, check_obj, symbol);
+
+    if (result.hit === true) {
+      acc.push(result);
+    }
+    return acc;
+  }, []);
+}
+
 export function checkTotalHits(reel_matrix, symbol_list) {
-  let test_list = getHitTestList();
+  let test_list = test_list_new;
   //prođi kroz listu simbola
   return symbol_list.reduce((acc, el) => {
     acc.push({
       symbol: el,
       //uradi sve testove za 1 simbol
-      test: checkHitsForTestList(reel_matrix, el, test_list),
+      test: checkAllTests(reel_matrix, el, test_list),
     });
 
     return acc;
   }, []);
 }
-
-//prolazak kroz listu testova
-function checkHitsForTestList(reel_matrix, symbol, test_list) {
-  let flat = [...reel_matrix[0], ...reel_matrix[1], ...reel_matrix[2]];
-
-  return test_list.reduce((acc, t, idx) => {
-    let result = checkHits(flat, t.tests, symbol, t.mask);
-
-    result.forEach((el) => {
-      if (el.hit === true) {
-        acc.push({ id: t.id, symbol: symbol, hit: true, hit_map: el.test_map,payout:GetPayout(symbol,t.id)});
-      }
-    });
-
-    return acc;
-  }, []);
-}
-
-//provera 1 testa sa 1 simbolom
-function checkHits(flat_reel_matrix, hit_test, symbol, mask) {
-  return hit_test
-    .map((t) => {
-      //prođi kroz niz simbola koji su izvučeni u igri
-      return flat_reel_matrix.reduce(
-        (acc, x, idx) => {
-          //transformacija u 0 i 1 (ostaje samo 1 simbol)
-          let transformed = x === symbol ? 1 : 0;
-
-          //maskiranje matrice
-          let masked = mask[idx] === 1 && transformed === 1;
-
-          //1. uslov - prisutnost datog obrasca
-          let presence =
-            (masked === true && t[idx] === 1) ||
-            (masked === false && t[idx] === 0);
-
-          acc.presence_map.push(presence);
-          acc.masked_map.push(masked);
-          acc.test_map.push(t[idx]);
-          acc.flat_matrix.push(x);
-          acc.transf_matrix.push(transformed);
-
-          return acc;
-        },
-        {
-          presence_map: [],
-          masked_map: [],
-          test_map: [],
-          flat_matrix: [],
-          transf_matrix: [],
-        }
-      );
-    })
-    .map((el) => {
-      //nakon što se dobiju oba uslova za svaku test matricu
-      //da bi se kombinacija smatrala pogođenom
-      //svi elementi prvog uslova moraju biti true
-      //svi elementi drugog uslova moraju biti false
-
-      return {
-        test_map: el.test_map,
-        hit: el.presence_map.every((x) => x === true),
-      };
-    });
-}
-

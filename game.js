@@ -1,11 +1,13 @@
 
 import { SlotMachine } from "./slot_machine.js"
 import { SYMBOL_NAMES,CURRENCY_SIGN } from "./setup.js"
-
+import { sound } from "./setup.js";
 
 
 
 async function StartGame() {
+
+    //new sound("./rsc/casino_ambience1.mp3").play();
 
      //canvas
      const canvas1 = document.getElementById("mycanvas1");
