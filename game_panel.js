@@ -4,7 +4,7 @@ export class GamePanel {
 
     //stage
     let stage = slot_machine.reel_frame;
-    
+
     let cb_spin=slot_machine.spinReels
     let cb_max_bet=slot_machine.maxBet
     let cb_bet_up=slot_machine.betUp
@@ -18,7 +18,7 @@ export class GamePanel {
     stage.addChild(bg)
 
     //dugme za pokretanje
-    this.spin_button = new PIXI.Sprite(PIXI.utils.TextureCache["cp1_button"]);
+    this.spin_button = new PIXI.Sprite(PIXI.utils.TextureCache["spin_button"]);
     this.spin_button.scale.set(0.36);
     this.spin_button.x = 1040;
     this.spin_button.y=780
@@ -26,7 +26,7 @@ export class GamePanel {
     this.spin_button.buttonMode = true;
 
     //max bet dugme
-    this.max_bet_button = new PIXI.Sprite(PIXI.utils.TextureCache["cp1_button"]);
+    this.max_bet_button = new PIXI.Sprite(PIXI.utils.TextureCache["max_bet_button"]);
     this.max_bet_button.scale.set(0.36);
     this.max_bet_button.x = 70;
     this.max_bet_button.y=780
@@ -34,7 +34,7 @@ export class GamePanel {
     this.max_bet_button.buttonMode = true;
 
     //uvećanje uloga
-    this.bet_up_button = new PIXI.Sprite(PIXI.utils.TextureCache["cp1_button"]);
+    this.bet_up_button = new PIXI.Sprite(PIXI.utils.TextureCache["bet_up_button"]);
     this.bet_up_button.scale.set(0.17);
     this.bet_up_button.x = 500;
     this.bet_up_button.y=830
@@ -42,7 +42,7 @@ export class GamePanel {
     this.bet_up_button.buttonMode = true;
 
     //umanjenje uloga
-    this.bet_down_button = new PIXI.Sprite(PIXI.utils.TextureCache["cp1_button"]);
+    this.bet_down_button = new PIXI.Sprite(PIXI.utils.TextureCache["bet_down_button"]);
     this.bet_down_button.scale.set(0.17);
     this.bet_down_button.x = 360;
     this.bet_down_button.y=830
@@ -82,7 +82,7 @@ export class GamePanel {
 
     //text objekti
     let style = new PIXI.TextStyle({
-        fontFamily: "Verdana, Geneva, sans-serif",
+        fontFamily: "Verdana, Geneva, Trebuchet-MS, sans-serif",
       });
 
       //kredit

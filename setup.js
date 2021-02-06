@@ -70,7 +70,11 @@ export function getTextureNames() {
 
 const BACKGROUND_TEXTURE = "./rsc/background.jpg";
 const FRAME_TEXTURE = "./rsc/transparent_frame.png";
-const CP1_BUTTON = "./rsc/orange-button-hi.png";
+const SPIN_BUTTON_TEXTURE = "./rsc/spin_button.png";
+const MAX_BET_BUTTON_TEXTURE = "./rsc/max_bet_button.png";
+const BET_UP_BUTTON_TEXTURE="./rsc/plus_button.png"
+const BET_DOWN_BUTTON_TEXTURE="./rsc/minus_button.png"
+
 
 //učitavanje tekstura
 export async function loadTextures() {
@@ -87,7 +91,12 @@ export async function loadTextures() {
     PIXI.Loader.shared.add("frame", FRAME_TEXTURE);
 
     //dugme
-    PIXI.Loader.shared.add("cp1_button", CP1_BUTTON);
+    PIXI.Loader.shared.add("spin_button", SPIN_BUTTON_TEXTURE);
+
+    PIXI.Loader.shared.add("max_bet_button", MAX_BET_BUTTON_TEXTURE);
+
+    PIXI.Loader.shared.add("bet_up_button", BET_UP_BUTTON_TEXTURE);
+    PIXI.Loader.shared.add("bet_down_button", BET_DOWN_BUTTON_TEXTURE);
 
     PIXI.Loader.shared.load(() => {
       resolve();

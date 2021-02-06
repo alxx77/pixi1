@@ -391,10 +391,7 @@ export class SlotMachine {
       this.reel3.reelArray.slice(0, 3),
     ];
 
-    //console.log(this.symbol_names)
-    //console.log(this.reel1.reelArray);
-    //console.log(this.reel2.reelArray);
-    //console.log(this.reel3.reelArray);
+
 
     let hit_list = checkTotalHits(reel_matrix, this.symbol_names);
 
@@ -413,7 +410,8 @@ export class SlotMachine {
           let payout_factor = Number.parseInt(data.payout);
 
           //dodaj iznos opklade na kredit
-          this.credit_amount += payout_factor * this.bet_amount;
+          this.setCreditAmount(this.credit_amount + payout_factor * this.bet_amount);
+
         }
       }
     }
