@@ -20,9 +20,12 @@ export class Reel {
 
     this.symbolWidth = symbol_width;
 
+    //broj vidljivih simbola
+    this.visibleReelSymbolCount = 3;
+
     //svaka instanca klase ima svoj stage
     this.stage = new PIXI.Container();
-    this.stage.height=(symbol_height+1)*3
+    this.stage.height=(symbol_height+1)*this.visibleReelSymbolCount
 
     //niz koji skladišti redosled simbola na rolni
     this.reelArray = reel_array;
@@ -30,8 +33,7 @@ export class Reel {
     //veličina rolne
     this.reelSize = this.reelArray.length;
 
-    //broj vidljivih simbola
-    this.visibleReelSymbolSize = 3;
+
 
     //mapa sa sprajtovima simbola
     this.reelSpriteMap = reel_sprite_map;
@@ -55,7 +57,7 @@ export class Reel {
       sprite.x = 0;
 
       //y koordinata zavisi od pozicije simbola
-      sprite.y = (this.visibleReelSymbolSize - i - 1) * this.symbolHeight;
+      sprite.y = (this.visibleReelSymbolCount - i - 1) * this.symbolHeight;
 
       //ako je y negativan isključi vidljivost
       if (sprite.y < this.symbolHeight * -1) sprite.visible = false;
@@ -141,7 +143,7 @@ export class Reel {
           this.stage.children.push(this.stage.children.shift());
 
           //vidljivost sprajta this.VisibleSymbolSlotNumber se postavlja
-          let next_sprite = this.stage.children[this.visibleReelSymbolSize];
+          let next_sprite = this.stage.children[this.visibleReelSymbolCount];
 
           next_sprite.visible = true;
 
@@ -157,7 +159,7 @@ export class Reel {
         //zaokruživanje y koord na celobrojnu vrednost
         for (
           let symbol_slot = 0;
-          symbol_slot < this.visibleReelSymbolSize + 1;
+          symbol_slot < this.visibleReelSymbolCount + 1;
           symbol_slot++
         ) {
           const spr = this.stage.children[symbol_slot];

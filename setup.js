@@ -3,19 +3,34 @@ export const SYMBOL_HEIGHT = 244;
 export const REEL_X_OFFSET = SYMBOL_WIDTH;
 
 
+export const SYMBOL_01_LEMON="01-lemon"
+export const SYMBOL_02_ORANGE="02-orange"
+export const SYMBOL_03_PLUM="03-plum"
+export const SYMBOL_04_CHERRY="04-cherry"
+export const SYMBOL_05_GRAPES="05-grapes"
+export const SYMBOL_06_WATERMELON="06-watermelon"
+export const SYMBOL_07_SEVEN="07-seven"
+export const SYMBOL_08_TRIPLE_SEVEN="08-triple_seven"
+export const SYMBOL_09_BELL="09-bell"
+export const SYMBOL_10_CLOVER="10-clover"
+export const SYMBOL_11_DOLLAR="11-dollar"
+export const SYMBOL_12_TRIPLE_BAR="12-triple_bar"
+
+
+
 export const SYMBOL_NAMES = [
-  "01-lemon",
-  "02-orange",
-  "03-plum",
-  "04-cherry",
-  "05-grapes",
-  "06-watermelon",
-  "07-seven",
-  "08-triple_seven",
-  "09-bell",
-  "10-clover",
-  "11-dollar",
-  "12-triple_bar",
+  SYMBOL_01_LEMON,
+  SYMBOL_02_ORANGE,
+  SYMBOL_03_PLUM,
+  SYMBOL_04_CHERRY,
+  SYMBOL_05_GRAPES,
+  SYMBOL_06_WATERMELON,
+  SYMBOL_07_SEVEN,
+  SYMBOL_08_TRIPLE_SEVEN,
+  SYMBOL_09_BELL,
+  SYMBOL_10_CLOVER,
+  SYMBOL_11_DOLLAR,
+  SYMBOL_12_TRIPLE_BAR,
 ];
 
 export const CURRENCY_SIGN="$"
@@ -68,13 +83,13 @@ export function getTextureNames() {
   return x;
 }
 
-const BACKGROUND_TEXTURE = "./rsc/background.jpg";
+
 const FRAME_TEXTURE = "./rsc/transparent_frame.png";
 const SPIN_BUTTON_TEXTURE = "./rsc/spin_button.png";
 const MAX_BET_BUTTON_TEXTURE = "./rsc/max_bet_button.png";
 const BET_UP_BUTTON_TEXTURE="./rsc/plus_button.png"
 const BET_DOWN_BUTTON_TEXTURE="./rsc/minus_button.png"
-
+const GAME_PANEL_TEXTURE="./rsc/game_panel.png"
 
 //učitavanje tekstura
 export async function loadTextures() {
@@ -84,8 +99,6 @@ export async function loadTextures() {
       PIXI.Loader.shared.add(key, value);
     });
 
-    //slika za pozadinu
-    PIXI.Loader.shared.add("background", BACKGROUND_TEXTURE);
 
     //okvir
     PIXI.Loader.shared.add("frame", FRAME_TEXTURE);
@@ -97,6 +110,8 @@ export async function loadTextures() {
 
     PIXI.Loader.shared.add("bet_up_button", BET_UP_BUTTON_TEXTURE);
     PIXI.Loader.shared.add("bet_down_button", BET_DOWN_BUTTON_TEXTURE);
+
+    PIXI.Loader.shared.add("game_panel", GAME_PANEL_TEXTURE);
 
     PIXI.Loader.shared.load(() => {
       resolve();
@@ -118,14 +133,15 @@ export function initSprites() {
   return x;
 }
 
-export function getBackroundSprite() {
-  //pozadina
-  return new PIXI.Sprite(PIXI.utils.TextureCache["background"]);
-}
 
 export function getFrameSprite() {
   //pozadina
   return new PIXI.Sprite(PIXI.utils.TextureCache["frame"]);
+}
+
+export function getGamePanelBackgroundSprite() {
+  //pozadina
+  return new PIXI.Sprite(PIXI.utils.TextureCache["game_panel"]);
 }
 
 //HTML5 sound element

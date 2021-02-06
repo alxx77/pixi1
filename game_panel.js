@@ -1,3 +1,5 @@
+import {getGamePanelBackgroundSprite} from "./setup.js"
+
 export class GamePanel {
   constructor(slot_machine){ //stage, currency_sign, cb_spin,cb_max_bet,cb_bet_up,cb_bet_down) {
     this.currency_sign = slot_machine.currency_sign
@@ -11,10 +13,8 @@ export class GamePanel {
     let cb_bet_down=slot_machine.betDown
 
     //bela pozadina
-    const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
-    bg.height=150
-    bg.width=1315
-    bg.y=775
+    const bg = getGamePanelBackgroundSprite();
+    bg.y=755
     stage.addChild(bg)
 
     //dugme za pokretanje

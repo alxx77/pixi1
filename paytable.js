@@ -1,3 +1,19 @@
+
+import {
+  SYMBOL_01_LEMON,
+  SYMBOL_02_ORANGE,
+  SYMBOL_03_PLUM,
+  SYMBOL_04_CHERRY,
+  SYMBOL_05_GRAPES,
+  SYMBOL_06_WATERMELON,
+  SYMBOL_07_SEVEN,
+  SYMBOL_08_TRIPLE_SEVEN,
+  SYMBOL_09_BELL,
+  SYMBOL_10_CLOVER,
+  SYMBOL_11_DOLLAR,
+  SYMBOL_12_TRIPLE_BAR,
+} from "./setup.js";
+
 //lista testova
 function getHitTestList() {
   let hit2Top = {
@@ -75,18 +91,18 @@ function getHitTestList() {
 function getSymbolValueMap() {
   let x = new Map();
 
-  x.set("01-lemon", 1);
-  x.set("02-orange", 1);
-  x.set("03-plum", 1);
-  x.set("04-cherry", 1);
-  x.set("05-grapes", 1);
-  x.set("06-watermelon", 1);
-  x.set("07-seven", 10);
-  x.set("08-triple_seven", 5);
-  x.set("09-bell", 2);
-  x.set("10-clover", 2);
-  x.set("11-dollar", 3);
-  x.set("12-triple_bar", 2);
+  x.set(SYMBOL_01_LEMON, 1);
+  x.set(SYMBOL_02_ORANGE, 1);
+  x.set(SYMBOL_03_PLUM, 1);
+  x.set(SYMBOL_04_CHERRY, 1);
+  x.set(SYMBOL_05_GRAPES, 1);
+  x.set(SYMBOL_06_WATERMELON, 1);
+  x.set(SYMBOL_07_SEVEN, 10);
+  x.set(SYMBOL_08_TRIPLE_SEVEN, 5);
+  x.set(SYMBOL_09_BELL, 2);
+  x.set(SYMBOL_10_CLOVER, 2);
+  x.set(SYMBOL_11_DOLLAR, 3);
+  x.set(SYMBOL_12_TRIPLE_BAR, 2);
 
   return x
 }

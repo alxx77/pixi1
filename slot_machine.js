@@ -7,7 +7,19 @@ import {
   sound,
   SYMBOL_WIDTH,
   SYMBOL_HEIGHT,
-  REEL_X_OFFSET
+  REEL_X_OFFSET,
+  SYMBOL_01_LEMON,
+  SYMBOL_02_ORANGE,
+  SYMBOL_03_PLUM,
+  SYMBOL_04_CHERRY,
+  SYMBOL_05_GRAPES,
+  SYMBOL_06_WATERMELON,
+  SYMBOL_07_SEVEN,
+  SYMBOL_08_TRIPLE_SEVEN,
+  SYMBOL_09_BELL,
+  SYMBOL_10_CLOVER,
+  SYMBOL_11_DOLLAR,
+  SYMBOL_12_TRIPLE_BAR,
 } from "./setup.js";
 
 import { PlayRound } from "./backend.js";
@@ -19,10 +31,6 @@ import { winSymbolsFlicker } from "./win_animations.js";
 export class SlotMachine {
   constructor(canvas, symbol_names, currency_sign) {
     this.canvas = canvas;
-
-    this.reels_count = 3;
-
-    this.symbols_per_reel_count = 3;
 
     //root stage
     this.stage = null;
@@ -523,17 +531,17 @@ export class SlotMachine {
     //3 simbola osim "7"
     if (
       [
-        "01-lemon",
-        "02-orange",
-        "03-plum",
-        "04-cherry",
-        "05-grapes",
-        "06-watermelon",
-        "08-triple_seven",
-        "09-bell",
-        "10-clover",
-        "11-dollar",
-        "12-triple_bar",
+        SYMBOL_01_LEMON,
+        SYMBOL_02_ORANGE,
+        SYMBOL_03_PLUM,
+        SYMBOL_04_CHERRY,
+        SYMBOL_05_GRAPES,
+        SYMBOL_06_WATERMELON,
+        SYMBOL_08_TRIPLE_SEVEN,
+        SYMBOL_09_BELL,
+        SYMBOL_10_CLOVER,
+        SYMBOL_11_DOLLAR,
+        SYMBOL_12_TRIPLE_BAR,
       ].includes(symbol)
     ) {
       let sound_ended = new Promise((resolve) => {
@@ -560,7 +568,7 @@ export class SlotMachine {
 
       //očisti cb
       this.cb_mid_win_sound_ended = null;
-    } else if (symbol === "07-seven") {
+    } else if (symbol === SYMBOL_07_SEVEN) {
       let sound_ended = new Promise((resolve) => {
         this.cb_jackpot_sound_ended = () => {
           resolve();
@@ -588,17 +596,17 @@ export class SlotMachine {
     //dijagonale bez "7"
     if (
       [
-        "01-lemon",
-        "02-orange",
-        "03-plum",
-        "04-cherry",
-        "05-grapes",
-        "06-watermelon",
-        "08-triple_seven",
-        "09-bell",
-        "10-clover",
-        "11-dollar",
-        "12-triple_bar",
+        SYMBOL_01_LEMON,
+        SYMBOL_02_ORANGE,
+        SYMBOL_03_PLUM,
+        SYMBOL_04_CHERRY,
+        SYMBOL_05_GRAPES,
+        SYMBOL_06_WATERMELON,
+        SYMBOL_08_TRIPLE_SEVEN,
+        SYMBOL_09_BELL,
+        SYMBOL_10_CLOVER,
+        SYMBOL_11_DOLLAR,
+        SYMBOL_12_TRIPLE_BAR,
       ].includes(symbol)
     ) {
       let sound_ended = new Promise((resolve) => {
@@ -619,7 +627,7 @@ export class SlotMachine {
 
       //očisti cb
       this.cb_mid_win_sound_ended = null;
-    } else if (symbol === "07-seven") {
+    } else if (symbol === SYMBOL_07_SEVEN) {
       //promise
       let sound_ended = new Promise((resolve) => {
         this.cb_jackpot_sound_ended = () => {
