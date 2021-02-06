@@ -20,7 +20,7 @@ export function PlayRound(slot_machine) {
   }
 
   //2 runda 3x777
-  if (slot_machine.counter === 1) {
+  if (slot_machine.counter === 2) {
     let i1 = slot_machine.reel1.reelArray.indexOf("08-triple_seven");
     let i2 = slot_machine.reel2.reelArray.indexOf("08-triple_seven");
     let i3 = slot_machine.reel3.reelArray.indexOf("08-triple_seven");
@@ -31,7 +31,7 @@ export function PlayRound(slot_machine) {
   }
 
   //3 runda 3x7
-  if (slot_machine.counter === 2) {
+  if (slot_machine.counter === 4) {
     let i1 = slot_machine.reel1.reelArray.indexOf("07-seven");
     let i2 = slot_machine.reel2.reelArray.indexOf("07-seven");
     let i3 = slot_machine.reel3.reelArray.indexOf("07-seven");
@@ -42,7 +42,7 @@ export function PlayRound(slot_machine) {
   }
 
   //4 runda 3x7 dijagonalno
-  if (slot_machine.counter === 3) {
+  if (slot_machine.counter === 6) {
     let i1 = slot_machine.reel1.reelArray.indexOf("07-seven");
     let i2 = slot_machine.reel2.reelArray.indexOf("07-seven");
     let i3 = slot_machine.reel3.reelArray.indexOf("07-seven");
@@ -55,4 +55,9 @@ export function PlayRound(slot_machine) {
   slot_machine.counter++
 
   return [r1, r2, r3,r4,r5];
+}
+
+
+export function getCredit(){
+  return 100;
 }

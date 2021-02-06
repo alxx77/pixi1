@@ -3,9 +3,11 @@ import { Reel } from "./reel.js";
 import {
   loadTextures,
   initSprites,
-  getBackroundSprite,
   getFrameSprite,
   sound,
+  SYMBOL_WIDTH,
+  SYMBOL_HEIGHT,
+  REEL_X_OFFSET
 } from "./setup.js";
 
 import { PlayRound } from "./backend.js";
@@ -25,17 +27,11 @@ export class SlotMachine {
     //root stage
     this.stage = null;
 
-    //background
-    this.back = null;
-
     //stage za okvir rolni
     this.reel_frame = null;
 
     //stage za rolne
     this.reel_stage = null;
-
-    //stage za game panel
-    this.game_panel_stage = null;
 
     //instance rolni
     this.reel1 = null;
@@ -43,18 +39,6 @@ export class SlotMachine {
     this.reel3 = null;
     this.reel4 = null;
     this.reel5 = null;
-
-    //širina rolne u px
-    this.reel_width = 0;
-
-    //visina rolne u px
-    this.reel_height = 0;
-
-    //visina sprajta simbola
-    this.symbol_width = 0;
-
-    //širina sprajta simbola
-    this.symbol_height = 0;
 
     //nov ticker objekt
     this.ticker = new PIXI.Ticker();
@@ -67,6 +51,8 @@ export class SlotMachine {
 
     //kredit
     this.credit_amount = 0;
+
+    //ulog
     this.bet_amount = 0;
 
     //brojač rundi
@@ -151,85 +137,8 @@ export class SlotMachine {
     }
   }
 
-  view_recalc = (renderer) => {
-
-    let w = document.documentElement.clientWidth;
-
-    let h = document.documentElement.clientHeight;
-
-
-    renderer.resize(w, h);
-
-    let mx2 = w - 1315;
-    let my2 = h - 925;
-
-    console.log("resize: ", renderer.width,renderer.height)
-
-    if (w > h) {
-      //landscape
-
-      //ako je ukupna x margina negativna
-      //postaviti x ofset na 0
-      if (mx2 < 0) {
-        //glavni panel
-        this.reel_frame.x = 0;
-        this.reel_frame.width = w;
-        this.reel_frame.height = w / (1315 / 925);
-
-      } else {
-        //ako postoji pozitivna margina
-        this.reel_frame.x = mx2 / 2;
-        this.reel_frame.width = 1315;
-        this.reel_frame.height = 925;
-
-      }
-
-      //y osa
-      //ako je ukupna y margina negativna
-      //postaviti y ofset na 0
-      if (my2 < 0) {
-        //glavni panel
-        this.reel_frame.y = 0;
-        this.reel_frame.height = h-10;
-        this.reel_frame.width = (h-10)*(1315 / 925)
-        
-
-      } else {
-        //ako postoji pozitivna margina
-        this.reel_frame.y = my2 / 2;
-        this.reel_frame.width = 1315;
-        this.reel_frame.height = 925;
-
-      }
-
-
-
-
-    } else {
-      //portret
-      if (mx2 < 0) {
-        //glavni panel
-        this.reel_frame.x = 0;
-        this.reel_frame.y = 100;
-        this.reel_frame.width = w;
-        this.reel_frame.height = w / (1315 / 925);
-
-      } else {
-        //ako postoji pozitivna margina
-        this.reel_frame.x = mx2 / 2;
-        this.reel_frame.width = 1315;
-        this.reel_frame.height = 925;
-
-      }
-
-
-    }
-
-
-    
-  };
-
   //inicijalizacija
+  //******************************************************** */
   async initMachine() {
     //kreiranje slučajnog redosleda simbola na rolnama
     let symbol_slot1 = shuffleArray(this.symbol_names.slice(0));
@@ -259,7 +168,7 @@ export class SlotMachine {
       height: window.innerHeight,
       resolution: window.devicePixelRatio,
       autoDensity: true,
-      transparent:true
+      transparent: true,
     });
 
     //resize funkcija
@@ -270,13 +179,15 @@ export class SlotMachine {
     //resize event
     window.addEventListener("resize", resize);
 
- 
+    //promena orijentacije uređaja
+    window.addEventListener("orientationchange", resize);
+
     //stage za okvir rolni
     this.reel_frame = new PIXI.Container();
     this.reel_frame.addChild(getFrameSprite()); //1315x775
 
     //dodatak mesta za kontrole
-    this.reel_frame.height=775+150
+    this.reel_frame.height = 775 + 150;
     this.stage.addChild(this.reel_frame);
 
     //stage za rolne
@@ -295,55 +206,33 @@ export class SlotMachine {
     this.game_panel = new GamePanel(
       this.reel_frame,
       this.currency_sign,
-      this.spinReels
+      this.spinReels,
+      () => {
+        this.bet_amount = this.credit_amount;
+        this.setCreditAmount(0);
+      },
+      this.bet_up,
+      this.bet_down
     );
 
-
-    //iznos uloga
+    //inicijalni iznos uloga
     this.bet_amount = 10;
     this.game_panel.updateBetAmountText(this.bet_amount);
 
     this.view_recalc(renderer);
 
     //instanciranje instanci reel objekta
-    this.reel1 = new Reel(1, this.reel_stage, 244, 244, map1, symbol_slot1, 0);
-    this.reel2 = new Reel(
-      2,
-      this.reel_stage,
-      244,
-      244,
+    this.createReelInstances(
+      map1,
       map2,
-      symbol_slot2,
-      244
-    );
-    this.reel3 = new Reel(
-      3,
-      this.reel_stage,
-      244,
-      244,
       map3,
-      symbol_slot3,
-      244 * 2
-    );
-
-    this.reel4 = new Reel(
-      4,
-      this.reel_stage,
-      244,
-      244,
       map4,
-      symbol_slot4,
-      244 * 3
-    );
-
-    this.reel5 = new Reel(
-      5,
-      this.reel_stage,
-      244,
-      244,
       map5,
-      symbol_slot5,
-      244 * 4
+      symbol_slot1,
+      symbol_slot2,
+      symbol_slot3,
+      symbol_slot4,
+      symbol_slot5
     );
 
     //dodavanje render funkcija objekata u ticker obj.
@@ -570,7 +459,7 @@ export class SlotMachine {
   //izmena kredita
   setCreditAmount(cr) {
     let c = Number.parseFloat(cr);
-    if (c > 0) {
+    if (c >= 0) {
       this.credit_amount = c;
     }
 
@@ -743,4 +632,187 @@ export class SlotMachine {
       this.cb_jackpot_sound_ended = null;
     }
   }
+
+  //rekalkulacije veličine stejdža
+  view_recalc = (renderer) => {
+    let w = document.documentElement.clientWidth;
+
+    let h = document.documentElement.clientHeight;
+
+    renderer.resize(w, h);
+
+    let mx2 = w - 1315;
+    let my2 = h - 925;
+
+    let game_ratio=1315/925
+    let renderer_ratio=w/h
+
+    console.log("resize: ", renderer.width, renderer.height,mx2,my2);
+
+    let game_height=0;
+    let game_width=0;
+
+
+    //ako je odnos Š/v veći kod renderera
+    //znači da je on širi; tj. da je visina ograničavajući faktor
+    if(renderer_ratio>game_ratio){
+
+      //visina igre biće jednaka visini renderera, a max 925
+      game_height=Math.min(h,925);
+
+      //preračunaj širinu po njoj
+      game_width=game_height*game_ratio
+
+    }else{
+    //ako je odnos Š/v manji kod renderera
+    //znači da je on ; tj. da je širina ograničavajući faktor
+
+      //uzima se prvo širina renderera a max 1315
+      game_width=Math.min(w,1315)
+
+      //po njoj se računa visina
+      game_height=game_width/game_ratio
+
+    }
+
+    this.reel_frame.width=game_width;
+    this.reel_frame.height=game_height;
+
+    //margine po širini
+    if (w < 1315) {
+      //glavni panel
+      this.reel_frame.x = 0;
+
+    } else {
+      //ako postoji pozitivna margina
+      //podeli razliku po x osi
+      this.reel_frame.x = (w-1315) / 2;
+
+    }
+
+    //margine po visini
+    if (w > h) {
+      //landscape
+
+      //ako je y margina negativna
+      if(h<925){
+        //y ofset od 10 px
+        this.reel_frame.y=10;
+      }else{
+        //inače podeli razliku
+        this.reel_frame.y=(h-925)/2
+      }
+
+    } else {
+    //portret
+        this.reel_frame.y=Math.max((h*0.34-(game_height/2)),10)
+
+    }
+  };
+
+  //instance reel objekata
+  createReelInstances(
+    map1,
+    map2,
+    map3,
+    map4,
+    map5,
+    symbol_slot1,
+    symbol_slot2,
+    symbol_slot3,
+    symbol_slot4,
+    symbol_slot5
+  ) {
+    this.reel1 = new Reel(
+      1,
+      this.reel_stage,
+      SYMBOL_WIDTH,
+      SYMBOL_HEIGHT,
+      map1,
+      symbol_slot1,
+      REEL_X_OFFSET * 0
+    );
+    this.reel2 = new Reel(
+      2,
+      this.reel_stage,
+      SYMBOL_WIDTH,
+      SYMBOL_HEIGHT,
+      map2,
+      symbol_slot2,
+      REEL_X_OFFSET * 1
+    );
+    this.reel3 = new Reel(
+      3,
+      this.reel_stage,
+      SYMBOL_WIDTH,
+      SYMBOL_HEIGHT,
+      map3,
+      symbol_slot3,
+      REEL_X_OFFSET * 2
+    );
+    this.reel4 = new Reel(
+      4,
+      this.reel_stage,
+      SYMBOL_WIDTH,
+      SYMBOL_HEIGHT,
+      map4,
+      symbol_slot4,
+      REEL_X_OFFSET * 3
+    );
+    this.reel5 = new Reel(
+      5,
+      this.reel_stage,
+      SYMBOL_WIDTH,
+      SYMBOL_HEIGHT,
+      map5,
+      symbol_slot5,
+      REEL_X_OFFSET * 4
+    );
+  }
+
+  bet_up = () => {
+    //ako nema kredita izađi
+    if (this.credit_amount === 0) return;
+
+    //u zavisnosti od veličine uloga
+    //uvećaj za 1,5 ili 10 jedinica
+
+    //ako je ispod 10 jedinica
+    if (this.bet_amount < 10) {
+      //ako je ispod 5 uvećaj za 1
+      if (this.bet_amount < 5) {
+        this.bet_amount += 1;
+      } else {
+        this.bet_amount += 5;
+      }
+    } else {
+      //ako je preko deset uvećaj za 10
+      this.bet_amount += 10;
+    }
+
+    this.game_panel.updateBetAmountText(this.bet_amount);
+  };
+
+  bet_down = () => {
+    //ako nema kredita izađi
+    if (this.credit_amount === 0) return;
+
+    //u zavisnosti od veličine uloga
+    //uvećaj za 1,5 ili 10 jedinica
+
+    //ako je ispod 10 jedinica
+    if (this.bet_amount <= 10) {
+      //ako je ispod 5 uvećaj za 1
+      if (this.bet_amount <= 5) {
+        this.bet_amount -= 1;
+      } else {
+        this.bet_amount -= 5;
+      }
+    } else {
+      //ako je preko deset uvećaj za 10
+      this.bet_amount -= 10;
+    }
+
+    this.game_panel.updateBetAmountText(this.bet_amount);
+  };
 }

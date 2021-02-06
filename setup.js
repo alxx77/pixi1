@@ -1,4 +1,8 @@
 export const SYMBOL_WIDTH = 244;
+export const SYMBOL_HEIGHT = 244;
+export const REEL_X_OFFSET = SYMBOL_WIDTH;
+
+
 export const SYMBOL_NAMES = [
   "01-lemon",
   "02-orange",
@@ -15,6 +19,8 @@ export const SYMBOL_NAMES = [
 ];
 
 export const CURRENCY_SIGN="$"
+
+
 
 export function getTextureNames() {
   let x = new Map();
