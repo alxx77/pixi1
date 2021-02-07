@@ -365,19 +365,19 @@ export class SlotMachine {
 
     setTimeout(() => {
       this.reel2.spinReel(r2);
-    }, 50);
-
-    setTimeout(() => {
-      this.reel3.spinReel(r3);
-    }, 100);
-
-    setTimeout(() => {
-      this.reel4.spinReel(r4);
     }, 150);
 
     setTimeout(() => {
+      this.reel3.spinReel(r3);
+    }, 300);
+
+    setTimeout(() => {
+      this.reel4.spinReel(r4);
+    }, 450);
+
+    setTimeout(() => {
       this.reel5.spinReel(r5);
-    }, 200);
+    }, 600);
 
     //čekanje da sve rolne stanu završe...
     await Promise.all([
@@ -505,6 +505,7 @@ export class SlotMachine {
     });
 
     this.small_win_sound.sound.currentTime = 0;
+    this.small_win_sound.sound.volume=0.5
     this.small_win_sound.play();
 
     //oveži ispis dobitka
