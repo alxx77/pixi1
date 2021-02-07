@@ -75,15 +75,16 @@ export class Reel {
   //funkcija za linearnu interpolaciju
   lerp = (x, y, a) => x * (1 - a) + y * a;
 
-
   //funkcija koja kreira odgovarajući generator
   //koji generiše korake promene y-koordinate na sprajtovima
   getYStepGenerator = function* (r) {
     //potrebno je da broj rotacija bude neka relativno razumna brojka
     if (r < 1 || r > 100) return;
 
-    let acc_speed_list = [2.5, 3.5, 7,9.5,12,9];
+    //promena brzine pri pokretanju rolni
+    let acc_speed_list = [2.5, 3.5, 7, 9.5, 12, 9];
 
+    //3 stepena linearna interpolacija pokreta po y osi
     let prev_actual_dy1 = 0;
     let prev_actual_dy2 = 0;
     let prev_actual_dy3 = 0;
@@ -93,7 +94,7 @@ export class Reel {
     //ukupan broj rotacija
     for (let ir = 0; ir < r; ir++) {
       //vertikalni pomak rolne u 1 frejmu
-      let projected_dy = 10;
+      let nominal_dy = 10;
 
       //ukupan pomak po simbolu
       let total_y_shift = this.symbolHeight;
@@ -102,35 +103,36 @@ export class Reel {
       reel_speed = 8;
 
       //brzina rotacije ako je početak
-      if ([0, 1, 2,3,4,5].includes(ir)) {
+      if ([0, 1, 2, 3, 4, 5].includes(ir)) {
         reel_speed = acc_speed_list[ir];
       }
 
       //ako je kraj
       if (ir === r - 3) {
-        reel_speed = 5; //2+Math.random()*2
+        reel_speed = 5;
       } else if (ir === r - 2) {
-        reel_speed = 3; //1+Math.random()*1
+        reel_speed = 3; 
       } else if (ir === r - 1) {
-        reel_speed = 0.1 + Math.random() *2;
+        reel_speed = 0.1 + Math.random() * 2;
       }
 
       //frame_counter
-      let fc = 0; //frame_counter
+      let fc = 0;
 
       //radi dok se ne potroši ceo y put sprajta
       while (total_y_shift > 0) {
         //delta time
         let dt = yield;
 
+        //fleg zadnjeg frejma po simbolu
         let last_frame = false;
 
         //stvarni put po y osi korigovan za delta time
-        let actual_dy = projected_dy * dt * reel_speed;
+        let actual_dy = nominal_dy * dt * reel_speed;
 
         //interpoliraj sa starim pomakom
-        let avg2=this.lerp(prev_actual_dy3, prev_actual_dy2, 0.45)
-        let avg1=this.lerp(prev_actual_dy1,avg2 , 0.35)
+        let avg2 = this.lerp(prev_actual_dy3, prev_actual_dy2, 0.45);
+        let avg1 = this.lerp(prev_actual_dy1, avg2, 0.35);
         actual_dy = this.lerp(actual_dy, avg1, 0.25);
 
         //ako nema mesta za pun pomak
@@ -146,8 +148,8 @@ export class Reel {
         total_y_shift -= actual_dy;
 
         //sačuvaj info za sledeću iteraciju
-        prev_actual_dy3=prev_actual_dy2;
-        prev_actual_dy2=prev_actual_dy1;
+        prev_actual_dy3 = prev_actual_dy2;
+        prev_actual_dy2 = prev_actual_dy1;
         prev_actual_dy1 = actual_dy;
 
         //vrati y pomak
@@ -162,7 +164,7 @@ export class Reel {
 
     //ovde je regularni deo pokreta završen
 
-    //ukras pokret nadole br.1
+    //ukrasni pokret nadole br.1
     let total_y_shift = this.symbolHeight * 0.1;
 
     let dy = 5;
@@ -237,7 +239,7 @@ export class Reel {
 
       //dok generator radi
       if (!gen_y_step.done) {
-        //pomeri sve vidljive simbole
+        //pomeri sve vidljive simbole za datu vrednost
         for (let symbol_slot = 0; symbol_slot < this.reelSize; symbol_slot++) {
           const spr = this.stage.children[symbol_slot];
           spr.y += gen_y_step.value.delta;
@@ -264,8 +266,7 @@ export class Reel {
           //prvi simbol prebaci na kraj rolne (rotacija)
           this.reelArray.push(this.reelArray.shift());
         }
-
-        //kraj regularne rotacije
+        
       } else {
         //kraj rotacije kada generator završi sa radom
 

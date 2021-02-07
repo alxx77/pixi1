@@ -1,5 +1,5 @@
-export async function winSymbolsFlicker(slot_machine, hit_test_element) {
-  console.dir("fn - animation started");
+export async function winSymbolsFlicker(slot_machine, hit_item) {
+
 
   if (
     slot_machine.reel1.isSpinning ||
@@ -22,8 +22,9 @@ export async function winSymbolsFlicker(slot_machine, hit_test_element) {
   slot_machine.is_animation_running = true;
 
 
-  let hit_map = hit_test_element.test[0].hit_map;
-  let id = hit_test_element.test[0].id;
+  let hit_map = hit_item.hit_map;
+  let id = hit_item.id;
+
 
   //svi vidljivi delovi rolni prebačeni u 1D niz
   let flatmatrix = [
@@ -73,7 +74,6 @@ export async function winSymbolsFlicker(slot_machine, hit_test_element) {
     //ako postoji postavi fleg i izađi
     if (slot_machine.cancel_animation === true) {
       slot_machine.is_animation_running = false;
-      console.log("fn - animation early exit");
       return;
     }
 
@@ -96,7 +96,6 @@ export async function winSymbolsFlicker(slot_machine, hit_test_element) {
     await Delay(45);
   }
   //postavi fleg da je gotovo
-  console.dir("fn - animation finished");
   slot_machine.is_animation_running = false;
 
   return;

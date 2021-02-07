@@ -7,19 +7,7 @@ import {
   sound,
   SYMBOL_WIDTH,
   SYMBOL_HEIGHT,
-  REEL_X_OFFSET,
-  SYMBOL_01_LEMON,
-  SYMBOL_02_ORANGE,
-  SYMBOL_03_PLUM,
-  SYMBOL_04_CHERRY,
-  SYMBOL_05_GRAPES,
-  SYMBOL_06_WATERMELON,
-  SYMBOL_07_SEVEN,
-  SYMBOL_08_TRIPLE_SEVEN,
-  SYMBOL_09_BELL,
-  SYMBOL_10_CLOVER,
-  SYMBOL_11_DOLLAR,
-  SYMBOL_12_TRIPLE_BAR,
+  REEL_X_OFFSET
 } from "./setup.js";
 
 import { PlayRound } from "./backend.js";
@@ -144,7 +132,6 @@ export class SlotMachine {
         if (this.cb_notify_animation_stopped instanceof Function)
           this.cb_notify_animation_stopped();
       }
-      console.log("slot machine: animation stopped/ended");
     }
   }
 
@@ -400,80 +387,72 @@ export class SlotMachine {
       this.reel5.reelArray.slice(0, 3),
     ];
 
-    let hit_list = checkTotalHits(reel_matrix, this.symbol_names);
+    let total_hit_list = checkTotalHits(reel_matrix, this.symbol_names);
 
-    console.dir(hit_list);
+    //console.dir(hit_list);
 
-    for (let tests_for_symbol of hit_list) {
-      let test = tests_for_symbol.test;
+    let hit_data = total_hit_list.reduce((acc, el) => {
+      acc.push(...el.test);
+      return acc;
+    }, []);
 
-      //ako postoji pogodak
-      if (test.length > 0) {
-        let data = test[0];
 
-        console.dir(test);
-        //2 provera
-        if (data.hit === true) {
-          let payout_factor = Number.parseInt(data.payout);
+    console.dir(hit_data);
 
-          //dodaj iznos opklade na kredit
-          this.setCreditAmount(
-            this.credit_amount + payout_factor * this.bet_amount
-          );
-        }
-      }
+    //prođi kroz listu (12 elemenata, za svaki simbol po 1)
+    for (let e of hit_data) {
+      let payout_factor = Number.parseInt(e.payout);
+
+      //dodaj iznos opklade na kredit
+      this.setCreditAmount(
+        this.credit_amount + payout_factor * this.bet_amount
+      );
     }
 
     //nakon obračuna dobitka dozvoljeni su prekidi
     this.round_is_running = false;
 
     //lista testova za sve kombinacije
-    for (let tests_for_symbol of hit_list) {
-      let test = tests_for_symbol.test;
+    for (let e of hit_data) {
 
-      //ako postoji pogodak
-      if (test.length > 0) {
-        let data = test[0];
-
-        //2 provera
-        if (data.hit === true) {
-          let payout_factor = Number.parseInt(data.payout);
+      
+          let payout_factor = Number.parseInt(e.payout);
 
           //dodaj iznos opklade na kredit
           let win_amount = payout_factor * this.bet_amount;
 
-          switch (data.id) {
+          switch (e.id) {
             case "hit2Top":
             case "hit2Mid":
             case "hit2Low":
             case "hit3Top":
             case "hit3Mid":
             case "hit3Low":
-              console.log(data.symbol);
-              await this.hit3Symbols(tests_for_symbol, win_amount, data.symbol);
+
+              await this.hit3Symbols(e, win_amount, e.symbol);
               break;
 
             case "hit4Top":
             case "hit4Mid":
             case "hit4Low":
-              console.log(data.symbol);
-              await this.hit4Symbols(tests_for_symbol, win_amount, data.symbol);
+
+              await this.hit4Symbols(e, win_amount, e.symbol);
               break;
 
             case "hit5Top":
             case "hit5Mid":
             case "hit5Low":
-              console.log(data.symbol);
-              await this.hit5Symbols(tests_for_symbol, win_amount, data.symbol);
+
+              await this.hit5Symbols(e, win_amount, e.symbol);
               break;
 
             default:
               break;
           }
-        }
-      }
+        
+      
     }
-    console.log("spin reels finished");
+
   };
 
   //start
@@ -494,8 +473,7 @@ export class SlotMachine {
   }
 
   //3 simbola
-  async hit3Symbols(element, win_amount) {
-    console.log("hit 3 symbols fn");
+  async hit3Symbols(hit_item, win_amount) {
 
     //promis za čekanje kraja zvuka
     let sound_ended = new Promise((resolve) => {
@@ -512,16 +490,14 @@ export class SlotMachine {
     this.game_panel.updateWinAmountText(win_amount);
 
     //sačekaj da se završi animacija i zvuk
-    await Promise.all([winSymbolsFlicker(this, element), sound_ended]);
-
-    console.log("3hits promise awaited");
+    await Promise.all([winSymbolsFlicker(this, hit_item), sound_ended]);
 
     //očisti cb
     this.cb_small_win_sound_ended = null;
   }
 
-  async hit4Symbols(element, win_amount) {
-    console.log("hit 4 symbols fn");
+  //4 pogotka
+  async hit4Symbols(hit_item, win_amount) {
 
     let sound_ended = new Promise((resolve) => {
       this.cb_mid_win_sound_ended = () => {
@@ -540,16 +516,14 @@ export class SlotMachine {
     this.game_panel.updateWinAmountText(win_amount);
 
     //sačekaj da se završi animacija i zvuk
-    await Promise.all([winSymbolsFlicker(this, element), sound_ended]);
-
-    console.log("4hits promise awaited");
+    await Promise.all([winSymbolsFlicker(this, hit_item), sound_ended]);
 
     //očisti cb
     this.cb_mid_win_sound_ended = null;
   }
 
-  async hit5Symbols(element, win_amount) {
-    console.log("hit 5 symbols fn");
+  //5 pogodaka
+  async hit5Symbols(hit_item, win_amount) {
 
     let sound_ended = new Promise((resolve) => {
       this.cb_jackpot_sound_ended = () => {
@@ -568,9 +542,7 @@ export class SlotMachine {
     this.game_panel.updateWinAmountText(win_amount);
 
     //sačekaj da se završi animacija i zvuk
-    await Promise.all([winSymbolsFlicker(this, element), sound_ended]);
-
-    console.log("5 hits promise awaited");
+    await Promise.all([winSymbolsFlicker(this, hit_item), sound_ended]);
 
     //očisti cb
     this.cb_jackpot_sound_ended = null;
@@ -590,8 +562,6 @@ export class SlotMachine {
 
     //-//- za renderer
     let renderer_ratio = w / h;
-
-    console.log("resize: ", renderer.width, renderer.height);
 
     //nove dimenzije stage-a
     let game_height = 0;
@@ -623,6 +593,7 @@ export class SlotMachine {
     //margine po širini
     this.reel_frame.x = (w - game_width) / 2;
 
+    //po visini
     if (w > h) {
       this.reel_frame.y = (h - game_height) / 2;
     } else {
