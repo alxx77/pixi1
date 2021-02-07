@@ -19,42 +19,48 @@ export function PlayRound(slot_machine) {
     r2 = i2 >= 1 && i2 <= 11 ? i2 - 1 : 11;
   }
 
-  //2 runda 3x777
+ 
+
+  //3 runda 3x7
   if (slot_machine.counter === 2) {
-    let i1 = slot_machine.reel1.reelArray.indexOf("08-triple_seven");
-    let i2 = slot_machine.reel2.reelArray.indexOf("08-triple_seven");
-    let i3 = slot_machine.reel3.reelArray.indexOf("08-triple_seven");
+    let i1 = slot_machine.reel1.reelArray.indexOf("07-seven");
+    let i2 = slot_machine.reel2.reelArray.indexOf("07-seven");
+    let i3 = slot_machine.reel3.reelArray.indexOf("07-seven");
 
     r1 = i1 >= 1 && i1 <= 11 ? i1 - 1 : 11;
     r2 = i2 >= 1 && i2 <= 11 ? i2 - 1 : 11;
     r3 = i3 >= 1 && i3 <= 11 ? i3 - 1 : 11;
   }
 
-  //3 runda 3x7
   if (slot_machine.counter === 4) {
     let i1 = slot_machine.reel1.reelArray.indexOf("07-seven");
     let i2 = slot_machine.reel2.reelArray.indexOf("07-seven");
     let i3 = slot_machine.reel3.reelArray.indexOf("07-seven");
+    let i4 = slot_machine.reel4.reelArray.indexOf("07-seven");
 
     r1 = i1 >= 1 && i1 <= 11 ? i1 - 1 : 11;
     r2 = i2 >= 1 && i2 <= 11 ? i2 - 1 : 11;
     r3 = i3 >= 1 && i3 <= 11 ? i3 - 1 : 11;
+    r4 = i4 >= 1 && i4 <= 11 ? i4 - 1 : 11;
   }
 
-  //4 runda 3x7 dijagonalno
   if (slot_machine.counter === 6) {
     let i1 = slot_machine.reel1.reelArray.indexOf("07-seven");
     let i2 = slot_machine.reel2.reelArray.indexOf("07-seven");
     let i3 = slot_machine.reel3.reelArray.indexOf("07-seven");
+    let i4 = slot_machine.reel4.reelArray.indexOf("07-seven");
+    let i5 = slot_machine.reel5.reelArray.indexOf("07-seven");
 
-    r1 = i1;
+    r1 = i1 >= 1 && i1 <= 11 ? i1 - 1 : 11;
     r2 = i2 >= 1 && i2 <= 11 ? i2 - 1 : 11;
-    r3 = i3 >= 2 && i3 <= 11 ? i3 - 2 : (i3===0 ? 10 : 11);
+    r3 = i3 >= 1 && i3 <= 11 ? i3 - 1 : 11;
+    r4 = i4 >= 1 && i4 <= 11 ? i4 - 1 : 11;
+    r5 = i5 >= 1 && i5 <= 11 ? i5 - 1 : 11;
   }
 
   slot_machine.counter++
 
-  return [r1, r2, r3,r4,r5];
+  return [r1, r2, r3, r4, r5];
 }
 
 

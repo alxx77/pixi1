@@ -1,4 +1,4 @@
-//klasa koja obuhvata sve funkcionalnosti 1 rolne (reel) slota 
+//klasa koja obuhvata sve funkcionalnosti 1 rolne (reel) slota
 export class Reel {
   constructor(
     reel_id,
@@ -25,15 +25,13 @@ export class Reel {
 
     //svaka instanca klase ima svoj stage
     this.stage = new PIXI.Container();
-    this.stage.height=(symbol_height+1)*this.visibleReelSymbolCount
+    this.stage.height = (symbol_height + 1) * this.visibleReelSymbolCount;
 
     //niz koji skladišti redosled simbola na rolni
     this.reelArray = reel_array;
 
     //veličina rolne
     this.reelSize = this.reelArray.length;
-
-
 
     //mapa sa sprajtovima simbola
     this.reelSpriteMap = reel_sprite_map;
@@ -45,11 +43,10 @@ export class Reel {
     this.yStepGenerator = null;
 
     //kolbek za završetak
-    this.cbSpinCompleted=null;
-  
+    this.cbSpinCompleted = null;
 
     //inicijalno postavljanje sprajtova u stage
-     for (let i = 0; i < this.reelSize; i++) {
+    for (let i = 0; i < this.reelSize; i++) {
       //nađi sprajt za dati simbol
       let sprite = this.reelSpriteMap.get(this.reelArray[i]);
 
@@ -66,75 +63,122 @@ export class Reel {
     }
 
     //postavljanje odgovarajuće pozicije kontejnera
-    this.stage.x=x_pos;
+    this.stage.x = x_pos;
 
     //dodavanje u parent kontejner
     this.container.addChild(this.stage);
 
-
+    //fleg za inicijalizaciju generatora
+    this.isGeneratorInitialised=false;
 
   }
 
+  //funkcija za linearnu interpolaciju
+  lerp = (x, y, a) => x * (1 - a) + y * a;
+
+
   //funkcija koja kreira odgovarajući generator
   //koji generiše korake promene y-koordinate na sprajtovima
-  getYStepGenerator = function* (r, speed_list) {
+  getYStepGenerator = function* (r) {
 
     //potrebno je da broj rotacija bude neka relativno razumna brojka
     if (r < 1 || r > 100) return;
 
+    let acc_speed_list = [1,3,6];
+
+    let prev_actual_dy = 0;
+
+    let reel_speed=0;
+
     //ukupan broj rotacija
     for (let ir = 0; ir < r; ir++) {
-
       //vertikalni pomak rolne u 1 frejmu
-      let vy = (this.symbolHeight / 6.0) * (speed_list[ir] ?? 5);
+      let projected_dy = 10;
+      let total_y_shift = this.symbolHeight;
+      reel_speed=7;
 
-      //celobrojni ostatak visine sprajta nakon vertikalne translacije vy puta
-      let rem = this.symbolHeight % vy;
-
-      //broj koraka y translacije
-      let step = Math.floor(this.symbolHeight / vy);
-
-      //y korak pojedinačne translacije
-      for (let y = 0; y < step; y++) {
-        
-        //vrati fleg, i vrednost za delta y
-        yield { y_step_delta: true, delta: vy };
+      //brzina rotacije ako je početak
+      if([0,1,2].includes(ir)){
+        reel_speed = acc_speed_list[ir]
       }
 
-      //ako postoji ostatak veći od 1 piksela
-      //prosledi ga
-      if (rem > 1) {
-        yield { y_step_delta: true, delta: rem };
+      //ako je kraj
+      if(ir===r-3){
+        reel_speed = 2+Math.random()*2
+      }else if(ir===r-2){
+        reel_speed=1+Math.random()*1
+      } else if(ir===r-1){
+        reel_speed=0.1+Math.random()*0.3
       }
 
-      //vrati fleg da je završeno animiranje 1 simbola
-      yield { y_step_delta: false, rotate_sprites: true };
+      //frame_counter
+      let fc=0;//frame_counter
+      
+
+      //radi dok se ne potroši ceo y put sprajta 
+      while (total_y_shift > 0.1) {
+        //delta time
+        let dt = yield;
+
+        let actual_dy = projected_dy * dt * reel_speed;
+
+        //ako nema mesta za pun pomak
+        if (total_y_shift < actual_dy) {
+          actual_dy = total_y_shift;
+        }
+
+        //poslednji frame simbola
+        let last_symbol_frame=(total_y_shift===actual_dy)
+
+        //vrati y pomak
+        yield { y_step_delta: true, delta: actual_dy,fc:fc++,rotation:ir,last_symbol_frame:last_symbol_frame };
+
+        //oduzmi od ukupnog pomaka
+        total_y_shift -= actual_dy;
+
+        //sačuvaj info za sledeću iteraciju
+        prev_actual_dy = actual_dy;
+      }
+
     }
   };
 
   //rendering funkcija koja ide u ticker
-  animateReel = () => {
+  animateReel = (dt) => {
+
     //ako je postavljen generator promene y koordinate
     if (this.yStepGenerator) {
-      //uzmi sledeću vrednost generatora
-      let g = this.yStepGenerator.next();
 
-      //console.log(delta)
+    //pokretanje generatora      
+     if(this.isGeneratorInitialised===false){
+       this.yStepGenerator.next(dt);
+       this.isGeneratorInitialised=true;
+     }
+
+     //vrednosti generatora
+      let gen_y_step=this.yStepGenerator.next(dt)
+
+      this.yStepGenerator.next();
 
       //proveri da li je došao do kraja
       //promeni y koordinatu svim sprajtovima u kontejneru
-      if (!g.done) {
-        //ako je promena y koord na redu
-        if (g.value.y_step_delta) {
+      if (!gen_y_step.done) {
+        //ako je u pitanju pomeranje po y osi
+        if (gen_y_step.value.y_step_delta===true) {
           for (
             let symbol_slot = 0;
             symbol_slot < this.reelSize;
             symbol_slot++
           ) {
             const spr = this.stage.children[symbol_slot];
-            spr.y += g.value.delta;
+            spr.y += gen_y_step.value.delta;
           }
-        } else {
+        } 
+
+        //ako je zadnji frejm za simbol
+        //podesi stari i novi simbol
+        if(gen_y_step.value.last_symbol_frame===true)
+        {
           //ako je donji sprajt u potpunosti izašao iz vidljivog dela kontejnera
 
           //vidljivost njegovog sprajta se gasi
@@ -156,30 +200,18 @@ export class Reel {
       } else {
         //kraj rotacije
 
-        //zaokruživanje y koord na celobrojnu vrednost
-        for (
-          let symbol_slot = 0;
-          symbol_slot < this.visibleReelSymbolCount + 1;
-          symbol_slot++
-        ) {
-          const spr = this.stage.children[symbol_slot];
-          spr.y = Math.round(spr.y);
-        }
-
         //kraj rotacije
         //ukloni generator
         this.clearYStepGenerator();
 
-        //console.log("id: "+ this.reelId+" " + this.reelArray)
 
         //kraj
         if (this.cbSpinCompleted) {
-          if (this.cbSpinCompleted instanceof Function) this.cbSpinCompleted(this.reelId);
+          if (this.cbSpinCompleted instanceof Function)
+            this.cbSpinCompleted(this.reelId);
         }
       }
-
     }
-
   };
 
   //pokretanje rolne
@@ -199,12 +231,15 @@ export class Reel {
   clearYStepGenerator() {
     this.yStepGenerator = null;
     this.isSpinning = false;
+    this.isGeneratorInitialised=false
   }
 
-  setTexture(visible_symbol_position,texture_state){
+  //izmena teksture simbola
+  setTexture(visible_symbol_position, texture_state) {
     if (this.isSpinning) return;
-      this.stage.children[visible_symbol_position].texture=PIXI.utils.TextureCache[this.reelArray[visible_symbol_position]+texture_state];
+    this.stage.children[visible_symbol_position].texture =
+      PIXI.utils.TextureCache[
+        this.reelArray[visible_symbol_position] + texture_state
+      ];
   }
-
-
 }

@@ -51,6 +51,7 @@ function getCombinationAndPositionValueMap() {
   return x;
 }
 
+//obračun - u broju uloga
 function GetPayout(symbol, hitCombination) {
   let symbol_value = getSymbolValueMap().get(symbol);
 
@@ -102,7 +103,7 @@ const test_list_new = [
   hit5LowCheck,
 ];
 
-//provera pogodaka
+//provera pogodaka - 1 test 
 function testMatrix(reel_matrix, check_obj, symbol) {
   //prolazak kroz matricu rolni
   let hit_matrix2D = reel_matrix.reduce((acc, reel_el) => {
@@ -145,6 +146,7 @@ function checkAllTests(reel_matrix, symbol, test_list) {
   }, []);
 }
 
+//ukupno svi testovi za sve simbole
 export function checkTotalHits(reel_matrix, symbol_list) {
   let test_list = test_list_new;
   //prođi kroz listu simbola

@@ -240,13 +240,13 @@ export class SlotMachine {
     );
 
     //dodavanje render funkcija objekata u ticker obj.
-    this.ticker.add(() => {
+    this.ticker.add((delta) => {
       //animacija 3 rolne
-      this.reel1.animateReel();
-      this.reel2.animateReel();
-      this.reel3.animateReel();
-      this.reel4.animateReel();
-      this.reel5.animateReel();
+      this.reel1.animateReel(delta);
+      this.reel2.animateReel(delta);
+      this.reel3.animateReel(delta);
+      this.reel4.animateReel(delta);
+      this.reel5.animateReel(delta);
 
       //rendering
       renderer.render(this.stage);
@@ -437,7 +437,6 @@ export class SlotMachine {
       if (test.length > 0) {
         let data = test[0];
 
-        console.dir(test);
         //2 provera
         if (data.hit === true) {
           let payout_factor = Number.parseInt(data.payout);

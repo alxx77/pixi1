@@ -110,6 +110,7 @@ async function Delay(n) {
   );
 }
 
+//promena tekstura na odgovarajućim poljima
 function switchTextures(slot_machine, hit_map, texture_state) {
   for (let [idx, value] of hit_map.entries()) {
     //ako je pogodak u polju
