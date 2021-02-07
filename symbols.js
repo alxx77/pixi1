@@ -1,1 +1,0 @@
-export const SYMBOL_01="Lemon"

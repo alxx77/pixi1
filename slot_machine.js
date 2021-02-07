@@ -1,4 +1,3 @@
-import { shuffleArray } from "./helper_fn.js";
 import { Reel } from "./reel.js";
 import {
   loadTextures,
@@ -143,11 +142,11 @@ export class SlotMachine {
   //******************************************************** */
   async initMachine() {
     //kreiranje slučajnog redosleda simbola na rolnama
-    let symbol_slot1 = shuffleArray(this.symbol_names.slice(0));
-    let symbol_slot2 = shuffleArray(this.symbol_names.slice(0));
-    let symbol_slot3 = shuffleArray(this.symbol_names.slice(0));
-    let symbol_slot4 = shuffleArray(this.symbol_names.slice(0));
-    let symbol_slot5 = shuffleArray(this.symbol_names.slice(0));
+    let symbol_slot1 = this.shuffleArray(this.symbol_names.slice(0));
+    let symbol_slot2 = this.shuffleArray(this.symbol_names.slice(0));
+    let symbol_slot3 = this.shuffleArray(this.symbol_names.slice(0));
+    let symbol_slot4 = this.shuffleArray(this.symbol_names.slice(0));
+    let symbol_slot5 = this.shuffleArray(this.symbol_names.slice(0));
 
     //učitavanje tekstura
     await loadTextures();
@@ -729,4 +728,16 @@ export class SlotMachine {
     this.game_panel.updateBetAmountText(this.bet_amount);
     this.button_click.play();
   };
+
+
+  //mešanje elemenata niza
+  shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+  }
+
+  return array;
+}
+
 }
