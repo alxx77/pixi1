@@ -128,10 +128,7 @@ export class SlotMachine {
     this.accent_sound = new sound("./rsc/accent.mp3");
 
     //da li je runda u toku (samo igra i obračun bodova, bez animacija za poene)
-    this.round_is_running=false;
-
-    
-
+    this.round_is_running = false;
   }
 
   //getter
@@ -262,8 +259,8 @@ export class SlotMachine {
     //zvuk - klik spin dugmeta
     this.spin_button_click.play();
 
-    if(this.round_is_running) {
-      console.log("previous round still running")
+    if (this.round_is_running) {
+      console.log("previous round still running");
       return;
     }
 
@@ -286,7 +283,7 @@ export class SlotMachine {
     }
 
     //postavi fleg
-    this.round_is_running=true;
+    this.round_is_running = true;
 
     //prekini animaciju na rolnama ukoliko možda je u toku
     //i sačekaj da funkcija završi
@@ -420,14 +417,15 @@ export class SlotMachine {
           let payout_factor = Number.parseInt(data.payout);
 
           //dodaj iznos opklade na kredit
-          this.setCreditAmount(this.credit_amount + payout_factor * this.bet_amount);
-
+          this.setCreditAmount(
+            this.credit_amount + payout_factor * this.bet_amount
+          );
         }
       }
     }
 
     //nakon obračuna dobitka dozvoljeni su prekidi
-    this.round_is_running=false;
+    this.round_is_running = false;
 
     //lista testova za sve kombinacije
     for (let tests_for_symbol of hit_list) {
@@ -442,47 +440,32 @@ export class SlotMachine {
           let payout_factor = Number.parseInt(data.payout);
 
           //dodaj iznos opklade na kredit
-          let win_amount= payout_factor * this.bet_amount;
+          let win_amount = payout_factor * this.bet_amount;
 
           switch (data.id) {
-
-              case "hit2Top":
-                case "hit2Mid":
-                case "hit2Low":
+            case "hit2Top":
+            case "hit2Mid":
+            case "hit2Low":
             case "hit3Top":
             case "hit3Mid":
             case "hit3Low":
               console.log(data.symbol);
-              await this.hit3Symbols(
-                tests_for_symbol,
-                win_amount,
-                data.symbol
-              );
+              await this.hit3Symbols(tests_for_symbol, win_amount, data.symbol);
               break;
 
-              case "hit4Top":
-                case "hit4Mid":
-                case "hit4Low":
-                  console.log(data.symbol);
-                  await this.hit4Symbols(
-                    tests_for_symbol,
-                    win_amount,
-                    data.symbol
-                  );
-                  break;
+            case "hit4Top":
+            case "hit4Mid":
+            case "hit4Low":
+              console.log(data.symbol);
+              await this.hit4Symbols(tests_for_symbol, win_amount, data.symbol);
+              break;
 
-                  case "hit5Top":
-                case "hit5Mid":
-                case "hit5Low":
-                  console.log(data.symbol);
-                  await this.hit5Symbols(
-                    tests_for_symbol,
-                    win_amount,
-                    data.symbol
-                  );
-                  break;
-
-
+            case "hit5Top":
+            case "hit5Mid":
+            case "hit5Low":
+              console.log(data.symbol);
+              await this.hit5Symbols(tests_for_symbol, win_amount, data.symbol);
+              break;
 
             default:
               break;
@@ -510,12 +493,10 @@ export class SlotMachine {
     this.game_panel.updateCreditAmountText(this.credit_amount);
   }
 
-
-
   //3 simbola
   async hit3Symbols(element, win_amount) {
     console.log("hit 3 symbols fn");
-     
+
     //promis za čekanje kraja zvuka
     let sound_ended = new Promise((resolve) => {
       this.cb_small_win_sound_ended = () => {
@@ -526,7 +507,7 @@ export class SlotMachine {
     this.small_win_sound.sound.currentTime = 0;
     this.small_win_sound.play();
 
-      //oveži ispis dobitka
+    //oveži ispis dobitka
     this.game_panel.updateWinAmountText(win_amount);
 
     //sačekaj da se završi animacija i zvuk
@@ -536,71 +517,63 @@ export class SlotMachine {
 
     //očisti cb
     this.cb_small_win_sound_ended = null;
-     
   }
-
 
   async hit4Symbols(element, win_amount) {
     console.log("hit 4 symbols fn");
-     
-      let sound_ended = new Promise((resolve) => {
-        this.cb_mid_win_sound_ended = () => {
-          resolve();
-        };
-      });
 
-      //pokrenti zvuk
-      this.mid_win_sound.sound.currentTime = 0;
-      this.mid_win_sound.play();
+    let sound_ended = new Promise((resolve) => {
+      this.cb_mid_win_sound_ended = () => {
+        resolve();
+      };
+    });
 
-      //osveži UI
-      //osveži ispis kredita
+    //pokrenti zvuk
+    this.mid_win_sound.sound.currentTime = 0;
+    this.mid_win_sound.play();
 
+    //osveži UI
+    //osveži ispis kredita
 
-      //oveži ispis dobitka
-      this.game_panel.updateWinAmountText(win_amount);
+    //oveži ispis dobitka
+    this.game_panel.updateWinAmountText(win_amount);
 
-      //sačekaj da se završi animacija i zvuk
-      await Promise.all([winSymbolsFlicker(this, element), sound_ended]);
+    //sačekaj da se završi animacija i zvuk
+    await Promise.all([winSymbolsFlicker(this, element), sound_ended]);
 
-      console.log("4hits promise awaited");
+    console.log("4hits promise awaited");
 
-      //očisti cb
-      this.cb_mid_win_sound_ended = null;
-     
+    //očisti cb
+    this.cb_mid_win_sound_ended = null;
   }
 
   async hit5Symbols(element, win_amount) {
     console.log("hit 5 symbols fn");
-     
-      let sound_ended = new Promise((resolve) => {
-        this.cb_jackpot_sound_ended = () => {
-          resolve();
-        };
-      });
 
-      //pokrenti zvuk
-      this.jackpot_sound.sound.currentTime = 0;
-      this.jackpot_sound.play();
+    let sound_ended = new Promise((resolve) => {
+      this.cb_jackpot_sound_ended = () => {
+        resolve();
+      };
+    });
 
-      //osveži UI
-      //osveži ispis kredita
+    //pokrenti zvuk
+    this.jackpot_sound.sound.currentTime = 0;
+    this.jackpot_sound.play();
 
+    //osveži UI
+    //osveži ispis kredita
 
-      //oveži ispis dobitka
-      this.game_panel.updateWinAmountText(win_amount);
+    //oveži ispis dobitka
+    this.game_panel.updateWinAmountText(win_amount);
 
-      //sačekaj da se završi animacija i zvuk
-      await Promise.all([winSymbolsFlicker(this, element), sound_ended]);
+    //sačekaj da se završi animacija i zvuk
+    await Promise.all([winSymbolsFlicker(this, element), sound_ended]);
 
-      console.log("5 hits promise awaited");
+    console.log("5 hits promise awaited");
 
-      //očisti cb
-      this.cb_jackpot_sound_ended = null;
-     
+    //očisti cb
+    this.cb_jackpot_sound_ended = null;
   }
-
-
 
   //rekalkulacije veličine stejdža
   viewRecalc = (renderer) => {
@@ -612,52 +585,48 @@ export class SlotMachine {
     renderer.resize(w, h);
 
     //odnos š/v za stage
-    let game_ratio=1315/925
+    let game_ratio = 1315 / 925;
 
     //-//- za renderer
-    let renderer_ratio=w/h
+    let renderer_ratio = w / h;
 
     console.log("resize: ", renderer.width, renderer.height);
 
     //nove dimenzije stage-a
-    let game_height=0;
-    let game_width=0;
+    let game_height = 0;
+    let game_width = 0;
 
     //ako je odnos Š/v veći kod renderera
     //znači da je on širi; tj. da je visina ograničavajući faktor
-    if(renderer_ratio>game_ratio){
-
+    if (renderer_ratio > game_ratio) {
       //visina igre biće jednaka visini renderera, a max 925
-      game_height=Math.min(h,925);
+      game_height = Math.min(h, 925);
 
       //preračunaj širinu po njoj
-      game_width=game_height*game_ratio
-
-    }else{
-    //ako je odnos Š/v manji kod renderera
-    //znači da je on uži tj. da je širina ograničavajući faktor
+      game_width = game_height * game_ratio;
+    } else {
+      //ako je odnos Š/v manji kod renderera
+      //znači da je on uži tj. da je širina ograničavajući faktor
 
       //uzima se prvo širina renderera a max 1315
-      game_width=Math.min(w,1315)
+      game_width = Math.min(w, 1315);
 
       //po njoj se računa visina
-      game_height=game_width/game_ratio
-
+      game_height = game_width / game_ratio;
     }
 
     //postavi dimenzije stage-a
-    this.reel_frame.width=game_width;
-    this.reel_frame.height=game_height;
+    this.reel_frame.width = game_width;
+    this.reel_frame.height = game_height;
 
     //margine po širini
-    this.reel_frame.x=(w-game_width)/2
+    this.reel_frame.x = (w - game_width) / 2;
 
-    if(w>h){
-      this.reel_frame.y=(h-game_height)/2
-    }else{
-      this.reel_frame.y=Math.max(h*0.34-(game_height/2),0)
+    if (w > h) {
+      this.reel_frame.y = (h - game_height) / 2;
+    } else {
+      this.reel_frame.y = Math.max(h * 0.34 - game_height / 2, 0);
     }
-
   };
 
   //instance reel objekata
@@ -721,8 +690,6 @@ export class SlotMachine {
   }
 
   betUp = () => {
-
-
     //u zavisnosti od veličine uloga
     //uvećaj za 1,5 ili 10 jedinica
 
@@ -769,7 +736,5 @@ export class SlotMachine {
   maxBet = () => {
     this.bet_amount = this.credit_amount;
     this.game_panel.updateBetAmountText(this.bet_amount);
-  }
-
-
+  };
 }
