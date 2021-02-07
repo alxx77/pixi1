@@ -70,6 +70,9 @@ export class Reel {
 
     //fleg za inicijalizaciju generatora
     this.isGeneratorInitialised = false;
+
+    //klik okretanja
+    this.cbReelSpinningClick=null;
   }
 
   //funkcija za linearnu interpolaciju
@@ -265,6 +268,9 @@ export class Reel {
 
           //prvi simbol prebaci na kraj rolne (rotacija)
           this.reelArray.push(this.reelArray.shift());
+
+          //1 klik rotacije
+          this.cbReelSpinningClick()
         }
         
       } else {

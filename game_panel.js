@@ -81,25 +81,32 @@ export class GamePanel {
 
 
     //text objekti
-    let style = new PIXI.TextStyle({
-        fontFamily: "Verdana, Geneva, Trebuchet-MS, sans-serif",
+    let style1 = new PIXI.TextStyle({
+        fontFamily: "Segoe UI,Frutiger,Frutiger Linotype,Dejavu Sans,Helvetica Neue,Arial,sans-serif; ",
+        fontSize:"32px"
+      });
+
+      let style2 = new PIXI.TextStyle({
+        fontFamily: "Segoe UI,Frutiger,Frutiger Linotype,Dejavu Sans,Helvetica Neue,Arial,sans-serif; ",
+        fontSize:"32px",
+        fontWeight:"bold"
       });
 
       //kredit
-    this.credit_amount_text_object=new PIXI.Text(`Credit: 0 ${this.currency_sign}`, style);
-    this.credit_amount_text_object.x=740
-    this.credit_amount_text_object.y=840
+    this.credit_amount_text_object=new PIXI.Text(`Credit: 0 ${this.currency_sign}`, style1);
+    this.credit_amount_text_object.x=710
+    this.credit_amount_text_object.y=835
     stage.addChild(this.credit_amount_text_object);
 
     //ulog
-    this.bet_amount_text_object=new PIXI.Text(`Bet: 0 ${this.currency_sign}`, style);
+    this.bet_amount_text_object=new PIXI.Text(`Bet: 0 ${this.currency_sign}`, style2);
     this.bet_amount_text_object.x=420
     this.bet_amount_text_object.y=785
 
     stage.addChild(this.bet_amount_text_object);
 
     //dobitak
-    this.win_amount_text_object=new PIXI.Text(`Win: 0 ${this.currency_sign}`, style);
+    this.win_amount_text_object=new PIXI.Text(`Win: 0 ${this.currency_sign}`, style1);
     this.win_amount_text_object.x=740
     this.win_amount_text_object.y=785
     

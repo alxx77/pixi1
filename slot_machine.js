@@ -68,10 +68,14 @@ export class SlotMachine {
 
     //zvuk********************************************
     //klik zvuk dugmeta
-    this.spin_button_click = new sound("./rsc/spin-button_click.mp3");
+    this.button_click = new sound("./rsc/spin-button_click.mp3");
 
+    this.reel_spinning_click=new sound("./rsc/reel_spinning_click.mp3")
+    
     //osnovni dobitak
     this.small_win_sound = new sound("./rsc/small_win.mp3");
+
+    this.ambience_sound_played=false;
 
     //kraj reprodukcije
     this.small_win_sound.sound.onended = (e) => {
@@ -244,7 +248,14 @@ export class SlotMachine {
     console.log("spin reels");
 
     //zvuk - klik spin dugmeta
-    this.spin_button_click.play();
+    this.button_click.play();
+
+    //proveri da li je jednom odsviran ambijentalni zvuk
+    if(!this.ambience_sound_played){
+      new sound("./rsc/casino_ambience1.mp3").play();
+      this.ambience_sound_played=true;
+    }
+   
 
     if (this.round_is_running) {
       console.log("previous round still running");
@@ -659,6 +670,14 @@ export class SlotMachine {
       symbol_slot5,
       REEL_X_OFFSET * 4
     );
+
+    //klik cb
+    this.reel1.cbReelSpinningClick=()=>this.reel_spinning_click.play()
+    this.reel2.cbReelSpinningClick=()=>this.reel_spinning_click.play()
+    this.reel3.cbReelSpinningClick=()=>this.reel_spinning_click.play()
+    this.reel4.cbReelSpinningClick=()=>this.reel_spinning_click.play()
+    this.reel5.cbReelSpinningClick=()=>this.reel_spinning_click.play()
+
   }
 
   betUp = () => {
@@ -677,7 +696,7 @@ export class SlotMachine {
       //ako je preko deset uvećaj za 10
       this.bet_amount += 10;
     }
-
+    this.button_click.play();
     this.game_panel.updateBetAmountText(this.bet_amount);
   };
 
@@ -700,7 +719,7 @@ export class SlotMachine {
       //ako je preko deset uvećaj za 10
       this.bet_amount -= 10;
     }
-
+    this.button_click.play();
     this.game_panel.updateBetAmountText(this.bet_amount);
   };
 
@@ -708,5 +727,6 @@ export class SlotMachine {
   maxBet = () => {
     this.bet_amount = this.credit_amount;
     this.game_panel.updateBetAmountText(this.bet_amount);
+    this.button_click.play();
   };
 }
